@@ -155,14 +155,14 @@ def link_all_notes() -> int:
             meta["links"] = updated_links
             write_frontmatter(note_path, meta, body)
     
-    print(f"  📊 Computed embeddings for {new_count} new notes")
-    print(f"  🔗 Created {new_links} new links")
+    print(f"  Computed embeddings for {new_count} new notes")
+    print(f"  Created {new_links} new links")
     
     return new_links
 
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    print("🔗 Computing embeddings and linking related notes...")
+    print("Computing embeddings and linking related notes...")
     new_links = link_all_notes()
-    print(f"\n✅ Done! {new_links} new links created.")
+    print(f"\nDone! {new_links} new links created.")

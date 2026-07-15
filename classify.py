@@ -95,7 +95,7 @@ def classify_all_pending() -> list[Path]:
                 
         except Exception as e:
             logger.error(f"Failed to classify {raw_path.name}: {e}")
-            print(f"  ⚠️  Skipped {raw_path.stem[:8]}: {e}")
+            print(f"  WARNING: Skipped {raw_path.stem[:8]}: {e}")
             continue
     
     return created
@@ -104,6 +104,6 @@ def classify_all_pending() -> list[Path]:
 if __name__ == "__main__":
     import sys
     logging.basicConfig(level=logging.INFO)
-    print("🏷️  Classifying pending raw captures...")
+    print("Classifying pending raw captures...")
     created = classify_all_pending()
-    print(f"\n✅ Classified {len(created)} notes into wiki/")
+    print(f"\nClassified {len(created)} notes into wiki/")

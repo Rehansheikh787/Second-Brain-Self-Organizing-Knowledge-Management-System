@@ -16,7 +16,7 @@ EMBEDDINGS_FILE = BASE_DIR / "embeddings.npz"
 
 # === LLM (Groq) ===
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
-GROQ_MODEL = "llama-3.1-70b-versatile"
+GROQ_MODEL = "llama-3.3-70b-versatile"
 CLASSIFY_TEMPERATURE = 0.1
 ASK_TEMPERATURE = 0.3
 CLASSIFY_MAX_TOKENS = 200
