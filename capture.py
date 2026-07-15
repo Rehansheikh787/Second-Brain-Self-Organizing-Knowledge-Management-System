@@ -78,3 +78,23 @@ def capture(content: str, source_type: str) -> str:
     save_json(output_path, data)
     
     return capture_id
+
+if __name__ == "__main__":
+    import argparse
+    
+    parser = argparse.ArgumentParser(description="Capture a note, link, or file into Second Brain")
+    parser.add_argument("--type", "-t", required=True, choices=["note", "link", "file"],
+                        help="Type of content to capture")
+    parser.add_argument("--content", "-c", required=True,
+                        help="The content to capture (text, URL, or file path)")
+    
+    args = parser.parse_args()
+    
+    try:
+        capture_id = capture(args.content, args.type)
+        print(f"SUCCESS: Captured! ID: {capture_id}")
+        print(f"         Saved to: raw/{capture_id}.json")
+    except DuplicateError as e:
+        print(f"WARNING: Duplicate: {e}")
+    except (ValueError, FileNotFoundError) as e:
+        print(f"ERROR: {e}")
