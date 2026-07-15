@@ -1,0 +1,11 @@
+{
+  "id": "5a97cbbf-9dfb-4261-8464-b3b145afeade",
+  "created": "2026-07-15T16:24:43.198870+05:30",
+  "source_type": "note",
+  "content": "Retrieval-Augmented Generation (RAG) is an AI framework for retrieving facts from an external knowledge base to ground large language models.",
+  "metadata": {
+    "original_filename": null,
+    "char_count": 141,
+    "content_hash": "sha256:12b3b4b2f6405b7cda632183e80e7da54740d5781dd6210c12c3d4fdc647c224"
+  }
+}

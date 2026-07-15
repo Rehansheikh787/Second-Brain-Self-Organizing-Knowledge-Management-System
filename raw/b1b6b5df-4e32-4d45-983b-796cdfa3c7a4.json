@@ -1,0 +1,11 @@
+{
+  "id": "b1b6b5df-4e32-4d45-983b-796cdfa3c7a4",
+  "created": "2026-07-15T16:24:40.792807+05:30",
+  "source_type": "note",
+  "content": "Python 3.12 introduced improved error messages for SyntaxErrors.",
+  "metadata": {
+    "original_filename": null,
+    "char_count": 64,
+    "content_hash": "sha256:21190f5fbf7ee379f3a5268745995e9b6986ad4fcdfd3f16521141dc6ee2fe27"
+  }
+}

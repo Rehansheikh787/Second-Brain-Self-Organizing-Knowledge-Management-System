@@ -1,0 +1,11 @@
+{
+  "id": "2884b2ef-e4f7-46cb-985f-f727d55625ff",
+  "created": "2026-07-15T16:24:43.485039+05:30",
+  "source_type": "note",
+  "content": "JSON files in Python can be quickly parsed using the built-in json module: json.loads() and json.dumps()",
+  "metadata": {
+    "original_filename": null,
+    "char_count": 104,
+    "content_hash": "sha256:50a88b953d27d9d8122983014198ca12b54789af746bb164b8405143f2a4fc40"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "417503b1-6194-4abb-946a-7a1206b3cff0",
+  "created": "2026-07-15T16:24:41.082116+05:30",
+  "source_type": "note",
+  "content": "Groq is an AI inference engine that uses LPUs (Language Processing Units) to achieve extremely fast generation speeds.",
+  "metadata": {
+    "original_filename": null,
+    "char_count": 118,
+    "content_hash": "sha256:bab55769d74a4894736d3099dd22f64e29883c3596a54a531296f421a0b2d0d1"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "fe985bd6-f539-49d6-8f51-5af75c5e3b24",
+  "created": "2026-07-15T16:24:44.254851+05:30",
+  "source_type": "note",
+  "content": "Always hash files or content using hashlib.sha256 to ensure data integrity and prevent duplicates.",
+  "metadata": {
+    "original_filename": null,
+    "char_count": 98,
+    "content_hash": "sha256:b7da1db664d11ac4d55d585ec16ebd49673baf5d5aaea1bb941a255763d3703a"
+  }
+}
