@@ -40,3 +40,33 @@ def test_capture_file():
             assert data["source_type"] == "file"
             assert data["content"] == "File contents here"
             assert data["metadata"]["original_filename"] == "test_input.txt"
+
+import pytest
+
+def test_capture_empty_content_raises():
+    from capture import capture
+    with pytest.raises(ValueError, match="empty"):
+        capture("", "note")
+
+def test_capture_whitespace_only_raises():
+    from capture import capture
+    with pytest.raises(ValueError, match="empty"):
+        capture("   \n  ", "note")
+
+def test_capture_invalid_type_raises():
+    from capture import capture
+    with pytest.raises(ValueError, match="source_type"):
+        capture("some content", "tweet")
+
+def test_capture_duplicate_raises():
+    from capture import capture, DuplicateError
+    with tempfile.TemporaryDirectory() as tmpdir:
+        with patch('capture.RAW_DIR', Path(tmpdir)), patch('utils.RAW_DIR', Path(tmpdir)):
+            capture("unique content here", "note")
+            with pytest.raises(DuplicateError):
+                capture("unique content here", "note")
+
+def test_capture_file_not_found_raises():
+    from capture import capture
+    with pytest.raises(FileNotFoundError):
+        capture("/nonexistent/path/file.txt", "file")
