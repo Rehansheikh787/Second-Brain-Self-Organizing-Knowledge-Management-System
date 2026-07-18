@@ -6,4 +6,5 @@ embeddings.npz
 *.egg-info/
 dist/
 build/
+.venv/
 .streamlit/secrets.toml
