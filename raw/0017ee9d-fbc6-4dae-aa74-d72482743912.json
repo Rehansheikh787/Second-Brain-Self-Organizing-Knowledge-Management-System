@@ -1,0 +1,11 @@
+{
+  "id": "0017ee9d-fbc6-4dae-aa74-d72482743912",
+  "created": "2026-07-18T16:45:01.824994+05:30",
+  "source_type": "note",
+  "content": "A Python virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.",
+  "metadata": {
+    "original_filename": null,
+    "char_count": 173,
+    "content_hash": "sha256:1c3146cedf74159dd56d34058655398260fd180c36bdaac4166ec124151d9070"
+  }
+}
