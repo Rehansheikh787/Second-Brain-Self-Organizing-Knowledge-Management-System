@@ -43,8 +43,8 @@ def write_frontmatter(filepath: Path, metadata: dict, body: str) -> None:
 
 
 def list_wiki_notes() -> list[Path]:
-    """Return all .md files in wiki/ directory."""
-    return sorted(WIKI_DIR.glob("*.md"))
+    """Return all .md files recursively in wiki/ directory."""
+    return sorted(WIKI_DIR.glob("**/*.md"))
 
 
 def list_raw_captures() -> list[Path]:

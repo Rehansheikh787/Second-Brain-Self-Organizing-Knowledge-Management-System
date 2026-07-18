@@ -61,8 +61,9 @@ def classify_note(raw_path: Path) -> Path:
     }
     
     # Write wiki note
-    WIKI_DIR.mkdir(parents=True, exist_ok=True)
-    wiki_path = WIKI_DIR / f"{note_id}.md"
+    category_dir = WIKI_DIR / category
+    category_dir.mkdir(parents=True, exist_ok=True)
+    wiki_path = category_dir / f"{note_id}.md"
     write_frontmatter(wiki_path, metadata, content)
     
     return wiki_path
