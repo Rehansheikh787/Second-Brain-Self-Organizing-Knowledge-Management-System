@@ -2,6 +2,53 @@
   "nodes": [
     {
       "data": {
+        "id": "c825243a-5b13-4297-8fff-14adaa392443",
+        "label": "Completed physics exam notes",
+        "category": "Archives",
+        "tags": [
+          "College",
+          "Physics",
+          "Exam Notes",
+          "2023"
+        ],
+        "summary": "Archive: Completed College Semester 1 Physics Course Exam Notes 2023",
+        "body": "Archive: Completed College Semester 1 Physics Course Exam Notes 2023",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "84c68d33-658c-46d8-b494-200b8dd57be2",
+        "label": "Personal health tracking",
+        "category": "Areas",
+        "tags": [
+          "health",
+          "fitness",
+          "workout",
+          "routine"
+        ],
+        "summary": "Area: Personal Health and Weekly Gym Workout Routine tracking",
+        "body": "Area: Personal Health and Weekly Gym Workout Routine tracking",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "17b04108-617d-444a-9ed2-b2966c49f650",
+        "label": "Build Second Brain MVP",
+        "category": "Projects",
+        "tags": [
+          "Second Brain",
+          "MVP",
+          "Web Development"
+        ],
+        "summary": "Project: Build Second Brain Web MVP release v1.0 by end of July",
+        "body": "Project: Build Second Brain Web MVP release v1.0 by end of July",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
         "id": "0017ee9d-fbc6-4dae-aa74-d72482743912",
         "label": "Python virtual environment",
         "category": "Resources",
@@ -241,8 +288,8 @@
     }
   ],
   "metadata": {
-    "generated_at": "2026-07-22T08:59:42.339937+00:00",
-    "node_count": 15,
+    "generated_at": "2026-07-22T09:26:03.225231+00:00",
+    "node_count": 18,
     "edge_count": 1
   }
 }
