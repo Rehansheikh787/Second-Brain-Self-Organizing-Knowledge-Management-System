@@ -1,0 +1,248 @@
+{
+  "nodes": [
+    {
+      "data": {
+        "id": "0017ee9d-fbc6-4dae-aa74-d72482743912",
+        "label": "Python virtual environment",
+        "category": "Resources",
+        "tags": [
+          "Python",
+          "Virtual Environment",
+          "Programming"
+        ],
+        "summary": "A Python virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number ...",
+        "body": "A Python virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.",
+        "degree": 1
+      }
+    },
+    {
+      "data": {
+        "id": "0380c3b5-f9d9-4ee8-a373-4c76bc961e7d",
+        "label": "Pytest testing framework",
+        "category": "Resources",
+        "tags": [
+          "pytest",
+          "testing",
+          "framework"
+        ],
+        "summary": "https://pytest.org/ - The pytest framework makes it easy to write small, readable tests, and can scale to support complex functional testing for appli...",
+        "body": "https://pytest.org/ - The pytest framework makes it easy to write small, readable tests, and can scale to support complex functional testing for applications and libraries.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "171db0fe-fbf3-409b-aa28-dfee7c369b2b",
+        "label": "pip package installer",
+        "category": "Resources",
+        "tags": [
+          "Python",
+          "pip",
+          "PyPI",
+          "packages"
+        ],
+        "summary": "pip is the package installer for Python. You can use pip to install packages from the Python Package Index (PyPI) and other indexes.",
+        "body": "pip is the package installer for Python. You can use pip to install packages from the Python Package Index (PyPI) and other indexes.",
+        "degree": 1
+      }
+    },
+    {
+      "data": {
+        "id": "1bca3859-1c80-4521-90ab-24a79ba99ff6",
+        "label": "Graph library",
+        "category": "Resources",
+        "tags": [
+          "Cytoscape.js",
+          "graph theory",
+          "visualization"
+        ],
+        "summary": "Cytoscape.js is a graph theory library for visualization and analysis. It can handle large interactive graphs in the browser.",
+        "body": "Cytoscape.js is a graph theory library for visualization and analysis. It can handle large interactive graphs in the browser.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "20139372-1c45-426c-8a55-01736f9baeaa",
+        "label": "NumPy for math ops",
+        "category": "Resources",
+        "tags": [
+          "NumPy",
+          "Python",
+          "Math"
+        ],
+        "summary": "NumPy is used for efficient mathematical operations and array manipulations in Python.",
+        "body": "NumPy is used for efficient mathematical operations and array manipulations in Python.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "2884b2ef-e4f7-46cb-985f-f727d55625ff",
+        "label": "Python JSON parsing",
+        "category": "Resources",
+        "tags": [
+          "Python",
+          "JSON",
+          "Parsing"
+        ],
+        "summary": "JSON files in Python can be quickly parsed using the built-in json module: json.loads() and json.dumps()",
+        "body": "JSON files in Python can be quickly parsed using the built-in json module: json.loads() and json.dumps()",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "417503b1-6194-4abb-946a-7a1206b3cff0",
+        "label": "Groq AI engine",
+        "category": "Resources",
+        "tags": [
+          "AI",
+          "Inference",
+          "LPUs",
+          "Groq"
+        ],
+        "summary": "Groq is an AI inference engine that uses LPUs (Language Processing Units) to achieve extremely fast generation speeds.",
+        "body": "Groq is an AI inference engine that uses LPUs (Language Processing Units) to achieve extremely fast generation speeds.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "5a97cbbf-9dfb-4261-8464-b3b145afeade",
+        "label": "RAG AI framework",
+        "category": "Resources",
+        "tags": [
+          "AI",
+          "RAG",
+          "Language Models"
+        ],
+        "summary": "Retrieval-Augmented Generation (RAG) is an AI framework for retrieving facts from an external knowledge base to ground large language models.",
+        "body": "Retrieval-Augmented Generation (RAG) is an AI framework for retrieving facts from an external knowledge base to ground large language models.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "6db68aa5-2c62-458e-a1f8-3349c338b0e7",
+        "label": "PARA organization system",
+        "category": "Resources",
+        "tags": [
+          "PARA",
+          "organization",
+          "productivity"
+        ],
+        "summary": "PARA stands for Projects, Areas, Resources, and Archives. It is a system for organizing digital information.",
+        "body": "PARA stands for Projects, Areas, Resources, and Archives. It is a system for organizing digital information.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "71b852fd-6e52-4b34-9c10-088bc968713e",
+        "label": "Chocolate cake recipe",
+        "category": "Resources",
+        "tags": [
+          "baking",
+          "recipe",
+          "chocolate"
+        ],
+        "summary": "To bake a chocolate cake, you need flour, cocoa powder, sugar, baking powder, eggs, milk, and butter. Bake at 350°F (175°C) for 30 minutes.",
+        "body": "To bake a chocolate cake, you need flour, cocoa powder, sugar, baking powder, eggs, milk, and butter. Bake at 350°F (175°C) for 30 minutes.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "81066345-901d-4a88-b2a9-0fce83a82a41",
+        "label": "CLI test note",
+        "category": "Resources",
+        "tags": [
+          "CLI",
+          "Test",
+          "Note",
+          "Command"
+        ],
+        "summary": "Test note from CLI",
+        "body": "Test note from CLI",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "8f5899eb-02bd-4c2a-b33e-b3a05fe04440",
+        "label": "Lightweight text embedding model",
+        "category": "Resources",
+        "tags": [
+          "SentenceTransformers",
+          "all-MiniLM-L6-v2",
+          "text embedding"
+        ],
+        "summary": "When using SentenceTransformers, 'all-MiniLM-L6-v2' is a great lightweight model for embedding text quickly.",
+        "body": "When using SentenceTransformers, 'all-MiniLM-L6-v2' is a great lightweight model for embedding text quickly.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "b1b6b5df-4e32-4d45-983b-796cdfa3c7a4",
+        "label": "Python 3.12 error messages",
+        "category": "Resources",
+        "tags": [
+          "Python",
+          "SyntaxErrors",
+          "Error Messages"
+        ],
+        "summary": "Python 3.12 introduced improved error messages for SyntaxErrors.",
+        "body": "Python 3.12 introduced improved error messages for SyntaxErrors.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "d396b987-6789-4a05-9f5b-b9f8f523ea72",
+        "label": "Streamlit app framework",
+        "category": "Resources",
+        "tags": [
+          "Streamlit",
+          "Machine Learning",
+          "Data Science"
+        ],
+        "summary": "https://streamlit.io/ - Streamlit is an open-source app framework for Machine Learning and Data Science teams.",
+        "body": "https://streamlit.io/ - Streamlit is an open-source app framework for Machine Learning and Data Science teams.",
+        "degree": 0
+      }
+    },
+    {
+      "data": {
+        "id": "fe985bd6-f539-49d6-8f51-5af75c5e3b24",
+        "label": "Use hashlib.sha256",
+        "category": "Resources",
+        "tags": [
+          "hashing",
+          "integrity",
+          "security",
+          "sha256"
+        ],
+        "summary": "Always hash files or content using hashlib.sha256 to ensure data integrity and prevent duplicates.",
+        "body": "Always hash files or content using hashlib.sha256 to ensure data integrity and prevent duplicates.",
+        "degree": 0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "data": {
+        "id": "e_0017ee9d-fbc6-4dae-aa74-d72482743912_171db0fe-fbf3-409b-aa28-dfee7c369b2b",
+        "source": "0017ee9d-fbc6-4dae-aa74-d72482743912",
+        "target": "171db0fe-fbf3-409b-aa28-dfee7c369b2b",
+        "weight": 0.5061
+      }
+    }
+  ],
+  "metadata": {
+    "generated_at": "2026-07-22T08:59:42.339937+00:00",
+    "node_count": 15,
+    "edge_count": 1
+  }
+}

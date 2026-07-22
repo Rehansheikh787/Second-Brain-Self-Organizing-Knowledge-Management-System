@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Brain - Knowledge Graph</title>
+  
+  <!-- Fonts & Cytoscape -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+  
+  <style>
+    :root {
+      --bg-dark: #0f172a;
+      --card-bg: rgba(30, 41, 59, 0.75);
+      --border-color: rgba(255, 255, 255, 0.1);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      --cat-projects: #f59e0b;
+      --cat-areas: #3b82f6;
+      --cat-resources: #10b981;
+      --cat-archives: #64748b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      display: flex;
+    }
+
+    #cy {
+      flex: 1;
+      height: 100%;
+      width: 100%;
+      background: radial-gradient(circle at center, #1e293b 0%, #0f172a 100%);
+    }
+
+    /* Glass Overlay Toolbar */
+    .controls-overlay {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      z-index: 10;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 320px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .title-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .title-header h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .stat-badge {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: #38bdf8;
+    }
+
+    .category-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-btn {
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid var(--border-color);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .filter-btn.active {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.projects { background-color: var(--cat-projects); }
+    .dot.areas { background-color: var(--cat-areas); }
+    .dot.resources { background-color: var(--cat-resources); }
+    .dot.archives { background-color: var(--cat-archives); }
+
+    .action-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-action {
+      flex: 1;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-main);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-action:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Side Drawer Detail Panel */
+    .drawer {
+      position: absolute;
+      top: 0;
+      right: -420px;
+      width: 400px;
+      height: 100%;
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-left: 1px solid var(--border-color);
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+      z-index: 20;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .drawer.open {
+      right: 0;
+    }
+
+    .drawer-close {
+      align-self: flex-end;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px;
+      margin-bottom: 8px;
+    }
+
+    .drawer-close:hover {
+      color: var(--text-main);
+    }
+
+    .drawer-category {
+      display: inline-block;
+      align-self: flex-start;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 10px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+    }
+
+    .drawer-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+
+    .drawer-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tag-badge {
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.1);
+      padding: 3px 8px;
+      border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    .drawer-body {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+      white-space: pre-wrap;
+      background: rgba(15, 23, 42, 0.4);
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 20px;
+    }
+
+    .drawer-links-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .linked-item {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .linked-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Tooltip */
+    .cy-tooltip {
+      position: absolute;
+      z-index: 30;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid var(--border-color);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: #fff;
+      pointer-events: none;
+      display: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Graph Canvas Container -->
+  <div id="cy"></div>
+
+  <!-- Control Overlay -->
+  <div class="controls-overlay">
+    <div class="title-header">
+      <h1>Knowledge Graph</h1>
+      <span class="stat-badge" id="node-count">0 Notes</span>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search notes by title or tag..." />
+    </div>
+
+    <div class="category-filters">
+      <button class="filter-btn active" data-cat="all">All</button>
+      <button class="filter-btn active" data-cat="Projects"><span class="dot projects"></span>Projects</button>
+      <button class="filter-btn active" data-cat="Areas"><span class="dot areas"></span>Areas</button>
+      <button class="filter-btn active" data-cat="Resources"><span class="dot resources"></span>Resources</button>
+      <button class="filter-btn active" data-cat="Archives"><span class="dot archives"></span>Archives</button>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-action" id="btn-fit">Fit View</button>
+      <button class="btn-action" id="btn-reset">Reset Filter</button>
+    </div>
+  </div>
+
+  <!-- Drawer Panel -->
+  <div class="drawer" id="drawer">
+    <button class="drawer-close" id="drawer-close">&times;</button>
+    <div class="drawer-category" id="drawer-cat">Category</div>
+    <h2 class="drawer-title" id="drawer-title">Note Title</h2>
+    <div class="drawer-tags" id="drawer-tags"></div>
+    <div class="drawer-body" id="drawer-body">Content...</div>
+    <div class="drawer-links-title">Connected Notes</div>
+    <div id="drawer-links"></div>
+  </div>
+
+  <!-- Custom Tooltip -->
+  <div class="cy-tooltip" id="tooltip"></div>
+
+  <script>
+    let cy = null;
+    let activeCategories = new Set(["Projects", "Areas", "Resources", "Archives"]);
+
+    const catColors = {
+      "Projects": "#f59e0b",
+      "Areas": "#3b82f6",
+      "Resources": "#10b981",
+      "Archives": "#64748b"
+    };
+
+    async function loadGraphData() {
+      // Allow window.GRAPH_DATA override if injected by Streamlit
+      if (window.GRAPH_DATA) {
+        return window.GRAPH_DATA;
+      }
+      try {
+        const resp = await fetch("../graph.json");
+        return await resp.json();
+      } catch (err) {
+        console.error("Failed to load graph.json:", err);
+        return { nodes: [], edges: [], metadata: { node_count: 0 } };
+      }
+    }
+
+    async function initGraph() {
+      const graphData = await loadGraphData();
+      document.getElementById("node-count").innerText = `${graphData.nodes.length} Notes`;
+
+      cy = cytoscape({
+        container: document.getElementById('cy'),
+        elements: {
+          nodes: graphData.nodes,
+          edges: graphData.edges
+        },
+        style: [
+          {
+            selector: 'node',
+            style: {
+              'label': 'data(label)',
+              'color': '#f8fafc',
+              'font-size': '11px',
+              'font-family': 'Inter, sans-serif',
+              'text-valign': 'bottom',
+              'text-margin-y': 6,
+              'background-color': function(ele) {
+                return catColors[ele.data('category')] || '#10b981';
+              },
+              'width': function(ele) {
+                return 20 + (ele.data('degree') || 0) * 8;
+              },
+              'height': function(ele) {
+                return 20 + (ele.data('degree') || 0) * 8;
+              },
+              'border-width': 2,
+              'border-color': '#0f172a',
+              'transition-property': 'background-color, line-color, target-arrow-color, opacity, width, height',
+              'transition-duration': '0.2s'
+            }
+          },
+          {
+            selector: 'edge',
+            style: {
+              'width': function(ele) {
+                return 1 + (ele.data('weight') || 0.5) * 3;
+              },
+              'line-color': '#475569',
+              'opacity': 0.5,
+              'curve-style': 'bezier'
+            }
+          },
+          {
+            selector: 'node.highlighted',
+            style: {
+              'border-width': 4,
+              'border-color': '#38bdf8',
+              'shadow-blur': 12,
+              'shadow-color': '#38bdf8',
+              'shadow-opacity': 0.8
+            }
+          },
+          {
+            selector: 'node.dimmed',
+            style: {
+              'opacity': 0.2
+            }
+          },
+          {
+            selector: 'edge.dimmed',
+            style: {
+              'opacity': 0.08
+            }
+          },
+          {
+            selector: 'edge.highlighted',
+            style: {
+              'line-color': '#38bdf8',
+              'opacity': 0.9,
+              'width': 3
+            }
+          }
+        ],
+        layout: {
+          name: 'cose',
+          animate: true,
+          animationDuration: 800,
+          nodeRepulsion: function( node ){ return 8000; },
+          idealEdgeLength: function( edge ){ return 80; },
+          gravity: 0.25
+        }
+      });
+
+      setupEvents();
+    }
+
+    function setupEvents() {
+      const tooltip = document.getElementById("tooltip");
+      const drawer = document.getElementById("drawer");
+
+      // Hover Tooltip
+      cy.on('mouseover', 'node', function(evt) {
+        const node = evt.target;
+        tooltip.innerHTML = `<strong>${node.data('label')}</strong><br/><small>${node.data('category')} &bull; ${node.data('degree')} links</small>`;
+        tooltip.style.display = 'block';
+      });
+
+      cy.on('mousemove', function(evt) {
+        tooltip.style.left = (evt.renderedPosition.x + 20) + 'px';
+        tooltip.style.top = (evt.renderedPosition.y + 20) + 'px';
+      });
+
+      cy.on('mouseout', 'node', function() {
+        tooltip.style.display = 'none';
+      });
+
+      // Click Node -> Open Drawer & Highlight Neighbors
+      cy.on('tap', 'node', function(evt) {
+        const node = evt.target;
+        openDrawer(node.data());
+
+        // Highlight neighborhood
+        cy.elements().removeClass('highlighted dimmed');
+        const neighborhood = node.neighborhood().add(node);
+        cy.elements().difference(neighborhood).addClass('dimmed');
+        neighborhood.addClass('highlighted');
+      });
+
+      // Tap Background -> Reset Selection
+      cy.on('tap', function(evt) {
+        if (evt.target === cy) {
+          cy.elements().removeClass('highlighted dimmed');
+          closeDrawer();
+        }
+      });
+
+      // Search Filter
+      document.getElementById('search-input').addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase().trim();
+        if (!query) {
+          cy.elements().removeClass('dimmed');
+          return;
+        }
+
+        cy.nodes().each(function(node) {
+          const label = (node.data('label') || '').toLowerCase();
+          const tags = (node.data('tags') || []).join(' ').toLowerCase();
+          if (label.includes(query) || tags.includes(query)) {
+            node.removeClass('dimmed');
+          } else {
+            node.addClass('dimmed');
+          }
+        });
+      });
+
+      // Category Pill Filters
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const cat = this.getAttribute('data-cat');
+          if (cat === 'all') {
+            activeCategories = new Set(["Projects", "Areas", "Resources", "Archives"]);
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.add('active'));
+          } else {
+            if (activeCategories.has(cat)) {
+              activeCategories.delete(cat);
+              this.classList.remove('active');
+            } else {
+              activeCategories.add(cat);
+              this.classList.add('active');
+            }
+          }
+          applyCategoryFilter();
+        });
+      });
+
+      // Action Buttons
+      document.getElementById('btn-fit').addEventListener('click', () => {
+        cy.animate({ fit: { padding: 40 }, duration: 500 });
+      });
+
+      document.getElementById('btn-reset').addEventListener('click', () => {
+        document.getElementById('search-input').value = '';
+        activeCategories = new Set(["Projects", "Areas", "Resources", "Archives"]);
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.add('active'));
+        cy.elements().removeClass('dimmed highlighted');
+        cy.animate({ fit: { padding: 40 }, duration: 500 });
+      });
+
+      document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+    }
+
+    function applyCategoryFilter() {
+      cy.nodes().each(function(node) {
+        const cat = node.data('category');
+        if (activeCategories.has(cat)) {
+          node.style('display', 'element');
+        } else {
+          node.style('display', 'none');
+        }
+      });
+    }
+
+    function openDrawer(data) {
+      const drawer = document.getElementById("drawer");
+      document.getElementById("drawer-title").innerText = data.label;
+      
+      const catBadge = document.getElementById("drawer-cat");
+      catBadge.innerText = data.category;
+      catBadge.style.backgroundColor = catColors[data.category] || '#10b981';
+      catBadge.style.color = '#0f172a';
+
+      const tagsContainer = document.getElementById("drawer-tags");
+      tagsContainer.innerHTML = (data.tags || []).map(t => `<span class="tag-badge">#${t}</span>`).join('');
+
+      document.getElementById("drawer-body").innerText = data.body || "No content.";
+
+      // Render connected neighbors
+      const linksContainer = document.getElementById("drawer-links");
+      linksContainer.innerHTML = '';
+      
+      const targetNode = cy.getElementById(data.id);
+      const connectedNodes = targetNode.neighborhood('node');
+
+      if (connectedNodes.length === 0) {
+        linksContainer.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted);">No connected notes</div>';
+      } else {
+        connectedNodes.each(node => {
+          const item = document.createElement('div');
+          item.className = 'linked-item';
+          item.innerHTML = `<span>${node.data('label')}</span><span class="stat-badge">${node.data('category')}</span>`;
+          item.onclick = () => {
+            cy.animate({ center: { eles: node }, zoom: 1.2, duration: 500 });
+            openDrawer(node.data());
+          };
+          linksContainer.appendChild(item);
+        });
+      }
+
+      drawer.classList.add("open");
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawer").classList.remove("open");
+    }
+
+    window.addEventListener('DOMContentLoaded', initGraph);
+  </script>
+</body>
+</html>
