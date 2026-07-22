@@ -112,9 +112,19 @@ def build_graph() -> dict:
 
 
 def export_graph(output_path: Path = GRAPH_JSON) -> Path:
-    """Build graph and save to JSON file."""
+    """Build graph and save to JSON file and static/graph_data.js for browser compatibility."""
+    import json
+    from config import STATIC_DIR
+    
     graph = build_graph()
     save_json(output_path, graph)
+    
+    # Export JS bundle for direct file:// browser opening without CORS blocking
+    STATIC_DIR.mkdir(parents=True, exist_ok=True)
+    js_path = STATIC_DIR / "graph_data.js"
+    js_content = f"window.GRAPH_DATA = {json.dumps(graph, indent=2, ensure_ascii=False)};"
+    js_path.write_text(js_content, encoding="utf-8")
+    
     logger.info(f"Graph exported to {output_path} ({graph['metadata']['node_count']} nodes, {graph['metadata']['edge_count']} edges)")
     return output_path
 
