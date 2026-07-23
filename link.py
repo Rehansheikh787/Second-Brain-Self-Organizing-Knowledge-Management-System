@@ -3,7 +3,6 @@
 import logging
 import numpy as np
 from pathlib import Path
-from sentence_transformers import SentenceTransformer
 
 from config import EMBEDDING_MODEL, EMBEDDINGS_FILE, WIKI_DIR, SIMILARITY_THRESHOLD
 from utils import read_frontmatter, write_frontmatter, list_wiki_notes
@@ -14,10 +13,11 @@ logger = logging.getLogger(__name__)
 _model = None
 
 
-def _get_model() -> SentenceTransformer:
+def _get_model():
     """Lazy-load the embedding model."""
     global _model
     if _model is None:
+        from sentence_transformers import SentenceTransformer
         _model = SentenceTransformer(EMBEDDING_MODEL)
     return _model
 
