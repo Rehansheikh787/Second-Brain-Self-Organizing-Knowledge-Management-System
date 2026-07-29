@@ -202,6 +202,12 @@ with tab_graph:
         with open(graph_html_path, "r", encoding="utf-8") as f:
             html_content = f.read()
             
+        # Inject current graph data directly into HTML for Streamlit iframe compatibility
+        graph_data = build_graph()
+        json_str = json.dumps(graph_data, ensure_ascii=False)
+        injected_script = f"<script>window.GRAPH_DATA = {json_str};</script>"
+        html_content = html_content.replace("<head>", f"<head>\n  {injected_script}")
+            
         components.html(html_content, height=680, scrolling=False)
     else:
         st.error("Graph UI HTML template not found in static/graph.html")
