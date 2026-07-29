@@ -16,6 +16,12 @@ EMBEDDINGS_FILE = BASE_DIR / "embeddings.npz"
 
 # === LLM (Groq) ===
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
+if not GROQ_API_KEY:
+    try:
+        import streamlit as st
+        GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", "")
+    except Exception:
+        pass
 GROQ_MODEL = "llama-3.3-70b-versatile"
 CLASSIFY_TEMPERATURE = 0.1
 ASK_TEMPERATURE = 0.3
