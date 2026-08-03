@@ -74,6 +74,9 @@ vectors as the single path.
 - Replace the per-note `find_similar` loop with a single normalized similarity
   matrix: `sim = (V / ‖V‖) @ (V / ‖V‖)ᵀ`, then threshold each row.
   One matmul instead of n scans.
+- Preserve existing link semantics exactly: exclude self (`exclude_id`),
+  apply `SIMILARITY_THRESHOLD` (0.45), dedupe via existing-links merge,
+  and keep bidirectional pairing.
 - Memory: n² floats. n=500 → ~1MB, n=2000 → ~16MB. Fine for a personal brain.
 - Keep `find_similar` exported for API compatibility; no longer used internally.
 
