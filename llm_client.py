@@ -1,6 +1,7 @@
-"""Groq LLM client with retry logic and JSON parsing."""
+﻿"""Groq LLM client with retry logic and JSON parsing."""
 
 import json
+import re
 import time
 import logging
 from groq import Groq
@@ -18,7 +19,7 @@ def call_groq(
 ) -> dict:
     """
     Send a request to Groq and parse the JSON response.
-    Retries on invalid JSON or rate limits.
+    Uses native JSON mode, with markdown fence & regex fallbacks.
     
     Returns: parsed JSON dict
     Raises: ValueError if all retries exhausted
@@ -34,20 +35,28 @@ def call_groq(
                     {"role": "user", "content": user_content}
                 ],
                 temperature=temperature,
-                max_tokens=max_tokens
+                max_tokens=max_tokens,
+                response_format={"type": "json_object"}
             )
             
             raw_text = response.choices[0].message.content.strip()
             
-            # Try to parse as JSON
-            # Handle case where LLM wraps JSON in markdown code block
+            # Fallback 1: Markdown code block stripping
             if raw_text.startswith("```"):
                 raw_text = raw_text.split("```")[1]
                 if raw_text.startswith("json"):
                     raw_text = raw_text[4:]
                 raw_text = raw_text.strip()
             
-            return json.loads(raw_text)
+            # Try primary parse
+            try:
+                return json.loads(raw_text)
+            except json.JSONDecodeError:
+                # Fallback 2: Extract first JSON object via regex
+                match = re.search(r"\{.*\}", raw_text, re.DOTALL)
+                if match:
+                    return json.loads(match.group(0))
+                raise
             
         except json.JSONDecodeError:
             logger.warning(f"Attempt {attempt + 1}: Invalid JSON from LLM, retrying...")

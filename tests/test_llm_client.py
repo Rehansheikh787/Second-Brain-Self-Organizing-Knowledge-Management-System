@@ -1,4 +1,4 @@
-from unittest.mock import patch, MagicMock
+﻿from unittest.mock import patch, MagicMock
 
 def test_call_groq_returns_parsed_json():
     from llm_client import call_groq
@@ -35,3 +35,19 @@ def test_call_groq_retries_on_invalid_json():
         
         result = call_groq("Classify this", "Content", max_retries=2)
         assert result["category"] == "Areas"
+
+def test_call_groq_extracts_json_with_preamble():
+    from llm_client import call_groq
+
+    mock_response = MagicMock()
+    mock_response.choices = [MagicMock()]
+    mock_response.choices[0].message.content = 'Here is your classification:\n{"category": "Projects", "title": "Build app", "tags": ["code"], "summary": "Build app"}'
+
+    with patch("llm_client.Groq") as MockGroq:
+        mock_client = MagicMock()
+        mock_client.chat.completions.create.return_value = mock_response
+        MockGroq.return_value = mock_client
+
+        result = call_groq("System", "User")
+        assert result["category"] == "Projects"
+        assert result["title"] == "Build app"
