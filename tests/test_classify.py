@@ -1,4 +1,4 @@
-import json
+﻿import json
 import tempfile
 from pathlib import Path
 from unittest.mock import patch, MagicMock
@@ -27,6 +27,7 @@ def test_classify_note_creates_wiki_markdown():
         # Mock LLM response
         mock_llm_result = {
             "category": "Resources",
+            "title": "Python Asyncio Overview",
             "tags": ["python", "asyncio", "concurrency"],
             "summary": "Python asyncio for concurrent IO operations"
         }
@@ -45,6 +46,6 @@ def test_classify_note_creates_wiki_markdown():
             meta, body = read_frontmatter(wiki_path)
             assert meta["category"] == "Resources"
             assert meta["tags"] == ["python", "asyncio", "concurrency"]
-            assert meta["title"] == "Python asyncio for concurrent IO operations"
+            assert meta["title"] == "Python Asyncio Overview"
             assert meta["id"] == "test-uuid-123"
             assert "asyncio" in body

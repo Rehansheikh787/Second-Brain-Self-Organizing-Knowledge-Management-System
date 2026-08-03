@@ -1,4 +1,4 @@
-"""PARA classification via LLM — auto-classify raw captures into structured wiki notes."""
+﻿"""PARA classification via LLM — auto-classify raw captures into structured wiki notes."""
 
 import logging
 from pathlib import Path
@@ -9,7 +9,7 @@ from llm_client import call_groq
 
 logger = logging.getLogger(__name__)
 
-CLASSIFY_SYSTEM_PROMPT = """You are a knowledge classifier. Categorize the following note using the PARA method:
+CLASSIFY_SYSTEM_PROMPT = """You are a knowledge classifier. Categorize the note using the PARA method:
 - Projects: active, time-bound goals
 - Areas: ongoing responsibilities  
 - Resources: reference material and interests
@@ -18,6 +18,7 @@ CLASSIFY_SYSTEM_PROMPT = """You are a knowledge classifier. Categorize the follo
 Respond ONLY in valid JSON with this exact structure:
 {
   "category": "one of: Projects, Areas, Resources, Archives",
+  "title": "concise descriptive note title, max 80 characters",
   "tags": ["3 to 5 relevant keywords"],
   "summary": "one-line summary, max 120 characters"
 }"""
@@ -48,10 +49,12 @@ def classify_note(raw_path: Path) -> Path:
         logger.warning(f"Invalid category '{category}' from LLM, defaulting to 'Resources'")
         category = "Resources"
     
+    title = result.get("title") or result.get("summary") or "Untitled"
+    
     # Build frontmatter metadata
     metadata = {
         "id": note_id,
-        "title": result.get("summary", "Untitled")[:120],
+        "title": str(title)[:120],
         "category": category,
         "tags": result.get("tags", []),
         "created": raw_data["created"],
