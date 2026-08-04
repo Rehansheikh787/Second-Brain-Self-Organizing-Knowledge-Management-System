@@ -61,9 +61,9 @@ def load_embeddings() -> tuple[list[str], np.ndarray]:
     if not EMBEDDINGS_FILE.exists():
         return [], np.array([]).reshape(0, 384)
     
-    data = np.load(EMBEDDINGS_FILE, allow_pickle=True)
-    ids = data["ids"].tolist()
-    vectors = data["vectors"]
+    with np.load(EMBEDDINGS_FILE, allow_pickle=True) as data:
+        ids = data["ids"].tolist()
+        vectors = data["vectors"]
     return ids, vectors
 
 
