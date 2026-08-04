@@ -14,6 +14,7 @@ from link import link_all_notes
 from build_graph import export_graph, build_graph
 from ask import ask
 from manage_notes import delete_note, update_note
+from export_import import ingest_uploaded_file, generate_zip_backup
 
 # Streamlit Page Config
 st.set_page_config(
@@ -154,7 +155,37 @@ with st.sidebar:
             st.warning("Content cannot be empty.")
 
     st.divider()
-    st.caption("🔧 System Pipeline")
+    st.subheader("📁 Upload File or Media")
+    up_file = st.file_uploader(
+        "Choose document or media file",
+        type=["txt", "md", "py", "js", "json", "pdf", "png", "jpg", "jpeg", "mp4", "mov", "webm"],
+        key="sidebar_file_uploader"
+    )
+    if st.button("Ingest Uploaded File", use_container_width=True):
+        if up_file:
+            with st.spinner("Extracting & processing pipeline..."):
+                try:
+                    cid = ingest_uploaded_file(up_file)
+                    st.success(f"Ingested ID: {cid[:8]}")
+                    st.toast("File captured & classified!", icon="📁")
+                    st.rerun()
+                except DuplicateError:
+                    st.warning("File already captured in Second Brain!")
+                except Exception as e:
+                    st.error(f"Ingestion error: {e}")
+        else:
+            st.warning("Please select a file first.")
+
+    st.divider()
+    st.caption("📦 Backup & System")
+    st.download_button(
+        label="Download Wiki Backup (ZIP)",
+        data=generate_zip_backup(),
+        file_name="second_brain_wiki_backup.zip",
+        mime="application/zip",
+        use_container_width=True
+    )
+    
     if st.button("Re-run Classify & Auto-Link", use_container_width=True):
         with st.spinner("Processing pipeline..."):
             classify_all_pending()
@@ -343,7 +374,7 @@ with tab_library:
                     st.markdown(f"**Links Count:** `{len(meta.get('links', []))}`")
                     
                 st.markdown("---")
-                st.markdown(body)
+                st.markdown(body, unsafe_allow_html=True)
                 
                 st.divider()
                 col_btn1, col_btn2 = st.columns([1, 1])
