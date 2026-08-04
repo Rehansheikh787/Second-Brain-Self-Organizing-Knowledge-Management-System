@@ -68,3 +68,10 @@ def test_link_all_notes_creates_bidirectional_links():
             meta_b, _ = read_frontmatter(wiki_dir / "note-b.md")
             linked_ids_b = [l["id"] for l in meta_b["links"]]
             assert "note-a" in linked_ids_b
+
+def test_compute_embeddings_batch_returns_matrix():
+    from link import compute_embeddings
+    texts = ["Python asyncio concurrency", "Recipe for cake"]
+    matrix = compute_embeddings(texts)
+    assert isinstance(matrix, np.ndarray)
+    assert matrix.shape == (2, 384)

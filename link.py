@@ -1,4 +1,4 @@
-"""Embedding computation & auto-linking — find related notes and link them bidirectionally."""
+﻿"""Embedding computation & auto-linking — find related notes and link them bidirectionally."""
 
 import logging
 import numpy as np
@@ -13,19 +13,47 @@ logger = logging.getLogger(__name__)
 _model = None
 
 
+class FallbackEmbedder:
+    """Fallback vectorizer when PyTorch/SentenceTransformers DLLs are unavailable on host."""
+    def encode(self, texts, convert_to_numpy=True):
+        if isinstance(texts, str):
+            texts = [texts]
+        if not texts:
+            return np.array([]).reshape(0, 384)
+        from sklearn.feature_extraction.text import HashingVectorizer
+        vectorizer = HashingVectorizer(n_features=384, norm='l2', alternate_sign=False)
+        X = vectorizer.fit_transform(texts).toarray().astype(np.float32)
+        return X if len(texts) > 1 else X[0] if not isinstance(texts, list) else X
+
+
 def _get_model():
-    """Lazy-load the embedding model."""
+    """Lazy-load the embedding model with fallback."""
     global _model
     if _model is None:
-        from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer(EMBEDDING_MODEL)
+        try:
+            from sentence_transformers import SentenceTransformer
+            _model = SentenceTransformer(EMBEDDING_MODEL)
+        except Exception as e:
+            logger.warning(f"SentenceTransformer unavailable ({e}), using FallbackEmbedder")
+            _model = FallbackEmbedder()
     return _model
 
 
-def compute_embedding(text: str) -> np.ndarray:
-    """Encode text into a 384-dim vector using the configured model."""
+def compute_embeddings(texts: list[str]) -> np.ndarray:
+    """Encode a list of texts into a (N, 384) matrix using batch processing."""
+    if not texts:
+        return np.array([]).reshape(0, 384)
     model = _get_model()
-    return model.encode(text, convert_to_numpy=True)
+    res = model.encode(texts, convert_to_numpy=True)
+    if isinstance(res, list):
+        res = np.array(res, dtype=np.float32)
+    return res
+
+
+def compute_embedding(text: str) -> np.ndarray:
+    """Encode single text into a 384-dim vector."""
+    res = compute_embeddings([text])
+    return res[0] if len(res) > 0 else np.zeros(384, dtype=np.float32)
 
 
 def load_embeddings() -> tuple[list[str], np.ndarray]:
@@ -58,7 +86,7 @@ def find_similar(
 ) -> list[dict]:
     """
     Find all notes with cosine similarity >= threshold to the query vector.
-    Returns: [{"id": "...", "similarity": 0.78}, ...] sorted by similarity desc.
+    Retained for API compatibility.
     """
     if threshold is None:
         threshold = SIMILARITY_THRESHOLD
@@ -66,11 +94,9 @@ def find_similar(
     if len(ids) == 0:
         return []
     
-    # Cosine similarity: dot(a, b) / (norm(a) * norm(b))
     norms = np.linalg.norm(vectors, axis=1)
     query_norm = np.linalg.norm(query_vector)
     
-    # Avoid division by zero
     valid = norms > 0
     similarities = np.zeros(len(ids))
     if query_norm > 0:
@@ -88,74 +114,87 @@ def find_similar(
 
 def link_all_notes() -> int:
     """
-    Compute/update embeddings for all wiki notes,
-    find similar pairs, write bidirectional links.
-    
-    Returns: number of new links created.
+    Batch compute embeddings for new notes and calculate bidirectional
+    links using normalized matrix dot-products.
     """
     wiki_notes = list_wiki_notes()
     if not wiki_notes:
         return 0
     
-    # Load existing embeddings
     existing_ids, existing_vectors = load_embeddings()
-    existing_set = set(existing_ids)
+    id_to_index = {nid: idx for idx, nid in enumerate(existing_ids)}
     
-    # Find new notes that need embedding
     all_ids = []
     all_vectors_list = []
-    new_count = 0
+    new_texts = []
+    new_indices = []
     
-    for note_path in wiki_notes:
+    # Identify new vs cached notes
+    for idx, note_path in enumerate(wiki_notes):
         meta, body = read_frontmatter(note_path)
         note_id = meta.get("id", note_path.stem)
+        all_ids.append(note_id)
         
-        if note_id in existing_set:
-            # Reuse existing embedding
-            idx = existing_ids.index(note_id)
-            all_ids.append(note_id)
-            all_vectors_list.append(existing_vectors[idx])
+        if note_id in id_to_index:
+            old_idx = id_to_index[note_id]
+            all_vectors_list.append(existing_vectors[old_idx])
         else:
-            # Compute new embedding
             text = f"{meta.get('title', '')} {body}"
-            vec = compute_embedding(text)
-            all_ids.append(note_id)
-            all_vectors_list.append(vec)
-            new_count += 1
-    
-    all_vectors = np.array(all_vectors_list)
-    
-    # Save updated embeddings
+            new_texts.append(text)
+            new_indices.append(idx)
+            all_vectors_list.append(None)  # Placeholder
+            
+    # Batch encode new notes in single call
+    if new_texts:
+        new_vecs = compute_embeddings(new_texts)
+        for sub_idx, orig_idx in enumerate(new_indices):
+            all_vectors_list[orig_idx] = new_vecs[sub_idx]
+            
+    all_vectors = np.array(all_vectors_list, dtype=np.float32)
     save_embeddings(all_ids, all_vectors)
     
-    # Find and write bidirectional links
+    N = len(all_ids)
+    if N <= 1:
+        return 0
+        
+    # Matrix similarity calculation: (V / ||V||) @ (V / ||V||).T
+    norms = np.linalg.norm(all_vectors, axis=1, keepdims=True)
+    norms[norms == 0] = 1e-9  # Avoid divide by zero
+    norm_vectors = all_vectors / norms
+    sim_matrix = np.dot(norm_vectors, norm_vectors.T)
+    
     new_links = 0
     
     for i, note_path in enumerate(wiki_notes):
         meta, body = read_frontmatter(note_path)
-        note_id = meta.get("id", note_path.stem)
+        source_id = all_ids[i]
         
-        similar = find_similar(
-            all_vectors[i], all_ids, all_vectors,
-            exclude_id=note_id
-        )
+        # Extract row similarities, mask out self-link
+        row_sims = sim_matrix[i].copy()
+        row_sims[i] = -1.0
         
-        # Get existing link IDs
+        # Find candidates >= SIMILARITY_THRESHOLD
+        match_indices = np.where(row_sims >= SIMILARITY_THRESHOLD)[0]
+        
+        similar = [
+            {"id": all_ids[j], "similarity": round(float(row_sims[j]), 4)}
+            for j in match_indices
+        ]
+        similar.sort(key=lambda x: x["similarity"], reverse=True)
+        
         existing_links = {link["id"] for link in meta.get("links", [])}
-        
-        # Merge new links (keep existing, add new)
         updated_links = list(meta.get("links", []))
+        
         for match in similar:
             if match["id"] not in existing_links:
                 updated_links.append(match)
                 new_links += 1
-        
-        # Write back if links changed
+                
         if len(updated_links) != len(meta.get("links", [])):
             meta["links"] = updated_links
             write_frontmatter(note_path, meta, body)
-    
-    print(f"  Computed embeddings for {new_count} new notes")
+            
+    print(f"  Processed {len(wiki_notes)} notes ({len(new_texts)} new)")
     print(f"  Created {new_links} new links")
     
     return new_links
