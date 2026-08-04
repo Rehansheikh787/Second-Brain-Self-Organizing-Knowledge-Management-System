@@ -72,8 +72,9 @@ def ingest_uploaded_file(uploaded_file) -> str:
     Extract uploaded file content, run capture, auto-classify, link, and export graph.
     Returns capture ID.
     """
+    filename = Path(uploaded_file.name).name
     content, ftype = extract_file_content(uploaded_file)
-    capture_id = capture(content, source_type="file")
+    capture_id = capture(content, source_type="file", original_filename=filename)
     
     classify_all_pending()
     link_all_notes()

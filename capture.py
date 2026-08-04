@@ -1,4 +1,4 @@
-"""Capture pipeline — one command saves anything to raw/ with timestamp + UUID."""
+﻿"""Capture pipeline — one command saves anything to raw/ with timestamp + UUID."""
 
 import uuid as uuid_mod
 from datetime import datetime, timezone
@@ -13,7 +13,7 @@ class DuplicateError(Exception):
     pass
 
 
-def capture(content: str, source_type: str) -> str:
+def capture(content: str, source_type: str, original_filename: str = None) -> str:
     """
     Validate input, generate UUID + timestamp, compute content hash,
     check for duplicates, write to raw/<uuid>.json.
@@ -30,20 +30,25 @@ def capture(content: str, source_type: str) -> str:
     if not content or not content.strip():
         raise ValueError("Content cannot be empty")
     
-    # If file type, read file contents
+    # If source_type is "file"
     if source_type == "file":
-        file_path = Path(content)
-        if not file_path.exists():
-            raise FileNotFoundError(f"File not found: {content}")
         try:
-            file_content = file_path.read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            file_content = file_path.read_text(encoding="latin-1")
-        original_filename = file_path.name
-        content = file_content
-    else:
-        original_filename = None
-    
+            file_path = Path(content)
+            if len(content) < 512 and "\n" not in content:
+                if file_path.exists() and file_path.is_file():
+                    try:
+                        file_content = file_path.read_text(encoding="utf-8")
+                    except UnicodeDecodeError:
+                        file_content = file_path.read_text(encoding="latin-1")
+                    original_filename = file_path.name
+                    content = file_content
+                elif not original_filename and (file_path.suffix or "/" in content or "\\" in content):
+                    raise FileNotFoundError(f"File not found: {content}")
+        except FileNotFoundError:
+            raise
+        except Exception:
+            pass
+            
     # Compute content hash
     content_hash = compute_content_hash(content)
     
