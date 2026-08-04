@@ -1,6 +1,7 @@
-"""Streamlit Web Dashboard for Second Brain — Graph Visualization, RAG Search, and Knowledge Explorer."""
+﻿"""Streamlit Web Dashboard for Second Brain — Graph Visualization, RAG Search, and Knowledge Explorer."""
 
 import json
+import math
 from pathlib import Path
 import streamlit as st
 import streamlit.components.v1 as components
@@ -12,6 +13,7 @@ from classify import classify_all_pending
 from link import link_all_notes
 from build_graph import export_graph, build_graph
 from ask import ask
+from manage_notes import delete_note, update_note
 
 # Streamlit Page Config
 st.set_page_config(
@@ -257,17 +259,33 @@ with tab_library:
     if not wiki_notes:
         st.info("No notes found in wiki/. Capture some notes to get started!")
     else:
-        filter_cat = st.radio(
-            "Filter Category",
-            ["All"] + config.PARA_CATEGORIES,
-            horizontal=True
-        )
-        
-        search_kw = st.text_input("Search Title or Content", placeholder="Type keywords...")
-        
-        displayed_notes = []
+        # Collect all unique tags
+        all_tags = set()
+        all_note_tuples = []
         for note_path in wiki_notes:
             meta, body = read_frontmatter(note_path)
+            all_note_tuples.append((note_path, meta, body))
+            for t in meta.get("tags", []):
+                if t:
+                    all_tags.add(t.strip())
+        sorted_all_tags = sorted(all_tags)
+        
+        # Category and Tag filters
+        col_f1, col_f2 = st.columns([1, 2])
+        with col_f1:
+            filter_cat = st.radio(
+                "Filter Category",
+                ["All"] + config.PARA_CATEGORIES,
+                horizontal=True
+            )
+        with col_f2:
+            selected_tags = st.multiselect("Filter Tags", sorted_all_tags, placeholder="Select tags...")
+            
+        search_kw = st.text_input("Search Title, Tags, or Content", placeholder="Type keywords...")
+        
+        # Filter notes logic
+        displayed_notes = []
+        for note_path, meta, body in all_note_tuples:
             cat = meta.get("category", "Resources")
             title = meta.get("title", note_path.stem)
             tags = meta.get("tags", [])
@@ -275,17 +293,45 @@ with tab_library:
             if filter_cat != "All" and cat != filter_cat:
                 continue
                 
+            if selected_tags:
+                if not any(st_tag in tags for st_tag in selected_tags):
+                    continue
+                    
             if search_kw.strip():
                 kw = search_kw.lower().strip()
-                if kw not in title.lower() and kw not in body.lower() and not any(kw in t.lower() for t in tags):
+                match_title = kw in title.lower()
+                match_body = kw in body.lower()
+                match_tag = any(kw in t.lower() for t in tags)
+                if not (match_title or match_body or match_tag):
                     continue
                     
             displayed_notes.append((note_path, meta, body))
             
-        st.caption(f"Showing {len(displayed_notes)} of {len(wiki_notes)} total notes")
+        # Pagination setup
+        col_p1, col_p2 = st.columns([3, 1])
+        with col_p2:
+            page_size = st.selectbox("Notes per page", [5, 10, 20], index=1)
+            
+        total_notes = len(displayed_notes)
+        total_pages = max(1, math.ceil(total_notes / page_size))
         
-        for note_path, meta, body in displayed_notes:
+        if "library_page" not in st.session_state:
+            st.session_state.library_page = 1
+        st.session_state.library_page = min(st.session_state.library_page, total_pages)
+        
+        with col_p1:
+            st.caption(f"Showing {total_notes} notes • Page {st.session_state.library_page} of {total_pages}")
+            
+        # Slice page items
+        start_idx = (st.session_state.library_page - 1) * page_size
+        end_idx = start_idx + page_size
+        page_notes = displayed_notes[start_idx:end_idx]
+        
+        # Render notes
+        for note_path, meta, body in page_notes:
+            note_id = meta.get("id", note_path.stem)
             cat_class = f"badge-{meta.get('category', 'resources').lower()}"
+            
             with st.expander(f"[{meta.get('category', 'Resources')}] {meta.get('title', note_path.stem)}"):
                 col_n1, col_n2 = st.columns([3, 1])
                 with col_n1:
@@ -293,8 +339,59 @@ with tab_library:
                     st.markdown(f"**Created:** `{meta.get('created', 'N/A')}`")
                     st.markdown(f"**Tags:** {', '.join(['#' + t for t in meta.get('tags', [])])}")
                 with col_n2:
-                    st.markdown(f"**ID:** `{meta.get('id', note_path.stem)[:8]}`")
+                    st.markdown(f"**ID:** `{note_id[:8]}`")
                     st.markdown(f"**Links Count:** `{len(meta.get('links', []))}`")
                     
                 st.markdown("---")
                 st.markdown(body)
+                
+                st.divider()
+                col_btn1, col_btn2 = st.columns([1, 1])
+                
+                # --- EDIT FORM ---
+                with col_btn1:
+                    with st.expander("✏️ Edit Note"):
+                        with st.form(f"edit_form_{note_id}"):
+                            edit_title = st.text_input("Title", value=meta.get("title", ""))
+                            edit_cat = st.selectbox(
+                                "Category",
+                                config.PARA_CATEGORIES,
+                                index=config.PARA_CATEGORIES.index(meta.get("category", "Resources")) if meta.get("category") in config.PARA_CATEGORIES else 2
+                            )
+                            edit_tags_str = st.text_input("Tags (comma separated)", value=", ".join(meta.get("tags", [])))
+                            edit_body = st.text_area("Body Content", value=body, height=160)
+                            
+                            submit_edit = st.form_submit_button("Save Changes", use_container_width=True)
+                            if submit_edit:
+                                parsed_tags = [t.strip() for t in edit_tags_str.split(",") if t.strip()]
+                                update_note(
+                                    note_id=note_id,
+                                    new_title=edit_title,
+                                    new_category=edit_cat,
+                                    new_tags=parsed_tags,
+                                    new_body=edit_body
+                                )
+                                st.toast("Note updated successfully!", icon="✅")
+                                st.rerun()
+                                
+                # --- DELETE BUTTON WITH CONFIRMATION ---
+                with col_btn2:
+                    with st.expander("🗑️ Delete Note"):
+                        confirm_del = st.checkbox("Confirm deletion", key=f"del_chk_{note_id}")
+                        if st.button("Delete Permanently", key=f"del_btn_{note_id}", type="primary", disabled=not confirm_del):
+                            delete_note(note_id)
+                            st.toast("Note deleted everywhere!", icon="🗑️")
+                            st.rerun()
+                            
+        # Pagination Controls Footer
+        if total_pages > 1:
+            st.write("")
+            col_pg1, col_pg2, col_pg3 = st.columns([1, 2, 1])
+            with col_pg1:
+                if st.button("◀ Previous Page", disabled=st.session_state.library_page <= 1):
+                    st.session_state.library_page -= 1
+                    st.rerun()
+            with col_pg3:
+                if st.button("Next Page ▶", disabled=st.session_state.library_page >= total_pages):
+                    st.session_state.library_page += 1
+                    st.rerun()
