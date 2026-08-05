@@ -99,3 +99,41 @@ def test_update_note_relocates_category():
             assert meta["category"] == "Projects"
             assert meta["tags"] == ["new"]
             assert body == "New Body"
+
+def test_get_backlinks():
+    from manage_notes import get_backlinks
+    from utils import write_frontmatter
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        wiki_dir = Path(tmpdir) / "wiki"
+        wiki_dir.mkdir()
+        res_dir = wiki_dir / "Resources"
+        res_dir.mkdir()
+
+        note1_path = res_dir / "note1.md"
+        write_frontmatter(note1_path, {
+            "id": "note1", "title": "Target Note", "category": "Resources",
+            "links": []
+        }, "Target content")
+
+        note2_path = res_dir / "note2.md"
+        write_frontmatter(note2_path, {
+            "id": "note2", "title": "Source Note 2", "category": "Projects",
+            "links": [{"id": "note1", "similarity": 0.85}]
+        }, "Source 2 content")
+
+        note3_path = res_dir / "note3.md"
+        write_frontmatter(note3_path, {
+            "id": "note3", "title": "Source Note 3", "category": "Areas",
+            "links": [{"id": "note1", "similarity": 0.62}]
+        }, "Source 3 content")
+
+        with patch("manage_notes.WIKI_DIR", wiki_dir), \
+             patch("utils.WIKI_DIR", wiki_dir):
+
+            backlinks = get_backlinks("note1")
+            assert len(backlinks) == 2
+            assert backlinks[0]["id"] == "note2"
+            assert backlinks[0]["similarity"] == 0.85
+            assert backlinks[1]["id"] == "note3"
+            assert backlinks[1]["similarity"] == 0.62

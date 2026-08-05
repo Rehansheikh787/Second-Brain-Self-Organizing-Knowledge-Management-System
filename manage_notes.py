@@ -12,6 +12,35 @@ from build_graph import export_graph
 logger = logging.getLogger(__name__)
 
 
+def get_backlinks(note_id: str) -> list[dict]:
+    """
+    Find all incoming backlinks referencing note_id.
+    Returns list of dicts: [{'id': str, 'title': str, 'category': str, 'similarity': float}]
+    """
+    backlinks = []
+    wiki_notes = list_wiki_notes()
+    
+    for note_path in wiki_notes:
+        meta, _ = read_frontmatter(note_path)
+        source_id = meta.get("id", note_path.stem)
+        if source_id == note_id:
+            continue
+            
+        links = meta.get("links", [])
+        for link in links:
+            if link.get("id") == note_id:
+                backlinks.append({
+                    "id": source_id,
+                    "title": meta.get("title", note_path.stem),
+                    "category": meta.get("category", "Resources"),
+                    "similarity": link.get("similarity", 0.0)
+                })
+                break
+                
+    backlinks.sort(key=lambda x: x.get("similarity", 0.0), reverse=True)
+    return backlinks
+
+
 def delete_note(note_id: str) -> bool:
     """
     Delete note by ID across wiki/, raw/, embeddings.npz, cross-links, and graph.json.

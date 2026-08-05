@@ -13,7 +13,7 @@ from classify import classify_all_pending
 from link import link_all_notes
 from build_graph import export_graph, build_graph
 from ask import ask
-from manage_notes import delete_note, update_note
+from manage_notes import delete_note, update_note, get_backlinks
 from export_import import ingest_uploaded_file, generate_zip_backup
 
 # Streamlit Page Config
@@ -290,11 +290,15 @@ with tab_library:
     if not wiki_notes:
         st.info("No notes found in wiki/. Capture some notes to get started!")
     else:
-        # Collect all unique tags
+        # Build quick ID lookup map for titles
+        id_to_meta = {}
         all_tags = set()
         all_note_tuples = []
+        
         for note_path in wiki_notes:
             meta, body = read_frontmatter(note_path)
+            nid = meta.get("id", note_path.stem)
+            id_to_meta[nid] = meta
             all_note_tuples.append((note_path, meta, body))
             for t in meta.get("tags", []):
                 if t:
@@ -376,6 +380,46 @@ with tab_library:
                 st.markdown("---")
                 st.markdown(body, unsafe_allow_html=True)
                 
+                # --- CONNECTED NOTES & BACKLINKS SECTION ---
+                st.markdown("---")
+                st.markdown("##### 🔗 Connected Knowledge Network")
+                col_link_out, col_link_in = st.columns(2)
+                
+                # Outgoing Links
+                with col_link_out:
+                    st.markdown("**Outgoing Links →**")
+                    out_links = meta.get("links", [])
+                    if not out_links:
+                        st.caption("No outgoing links")
+                    else:
+                        for l in out_links:
+                            target_id = l.get("id")
+                            sim_pct = int(l.get("similarity", 0) * 100)
+                            target_info = id_to_meta.get(target_id, {})
+                            target_title = target_info.get("title", target_id[:8])
+                            target_cat = target_info.get("category", "Resources")
+                            t_cat_class = f"badge-{target_cat.lower()}"
+                            st.markdown(
+                                f"• <span class='{t_cat_class}'>{target_cat}</span> **{target_title}** `{sim_pct}% match`",
+                                unsafe_allow_html=True
+                            )
+
+                # Incoming Backlinks
+                with col_link_in:
+                    st.markdown("**← Incoming Backlinks**")
+                    backlinks = get_backlinks(note_id)
+                    if not backlinks:
+                        st.caption("No incoming backlinks")
+                    else:
+                        for bl in backlinks:
+                            sim_pct = int(bl.get("similarity", 0) * 100)
+                            bl_cat = bl.get("category", "Resources")
+                            bl_cat_class = f"badge-{bl_cat.lower()}"
+                            st.markdown(
+                                f"• <span class='{bl_cat_class}'>{bl_cat}</span> **{bl.get('title')}** `{sim_pct}% match`",
+                                unsafe_allow_html=True
+                            )
+
                 st.divider()
                 col_btn1, col_btn2 = st.columns([1, 1])
                 
