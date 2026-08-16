@@ -243,5 +243,16 @@ Second Brain/
 
 ---
 
+## 👤 Author & Contributing
+
+- **Author**: **Rehan Sheikh** ([@Rehansheikh787](https://github.com/Rehansheikh787))
+- **Repository**: [Second-Brain-Self-Organizing-Knowledge-Management-System](https://github.com/Rehansheikh787/Second-Brain-Self-Organizing-Knowledge-Management-System)
+
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/Rehansheikh787/Second-Brain-Self-Organizing-Knowledge-Management-System/issues).
+
+---
+
 ## 📜 License
-Distributed under the [MIT License](LICENSE).
+
+Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
+
