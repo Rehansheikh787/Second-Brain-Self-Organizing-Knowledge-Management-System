@@ -1,4 +1,4 @@
-﻿"""Multi-format file extraction, media asset management, and ZIP backup generator."""
+"""Multi-format file extraction, media asset management, and ZIP backup generator."""
 
 import io
 import logging
@@ -6,7 +6,7 @@ import zipfile
 from pathlib import Path
 
 from config import WIKI_DIR, STATIC_DIR
-from capture import capture
+from capture import capture, clean_extracted_pdf_text
 from classify import classify_all_pending
 from link import link_all_notes
 from build_graph import export_graph
@@ -49,7 +49,8 @@ def extract_file_content(uploaded_file) -> tuple[str, str]:
                 txt = page.extract_text()
                 if txt:
                     text_parts.append(txt)
-            content = "\n\n".join(text_parts).strip()
+            raw_content = "\n\n".join(text_parts).strip()
+            content = clean_extracted_pdf_text(raw_content)
             if not content:
                 content = f"PDF File captured: {filename} (no extractable text)"
             return f"# PDF Document: {filename}\n\n{content}", "pdf"

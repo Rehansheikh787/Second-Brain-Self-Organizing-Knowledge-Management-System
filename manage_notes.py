@@ -1,4 +1,4 @@
-﻿"""Note lifecycle operations — delete note with cascading cleanup, update note with category relocation."""
+"""Note lifecycle operations — delete note with cascading cleanup, update note with category relocation."""
 
 import logging
 from pathlib import Path
@@ -6,7 +6,7 @@ import numpy as np
 
 from config import WIKI_DIR, RAW_DIR, EMBEDDINGS_FILE, GRAPH_JSON, PARA_CATEGORIES
 from utils import list_wiki_notes, read_frontmatter, write_frontmatter, load_json, save_json
-from link import load_embeddings, save_embeddings, link_all_notes
+from link import load_embeddings, save_embeddings, link_all_notes, invalidate_note_embedding
 from build_graph import export_graph
 
 logger = logging.getLogger(__name__)
@@ -139,8 +139,46 @@ def update_note(
     write_frontmatter(dest_path, target_meta, new_body.strip())
     
     # Refresh embeddings, linking & graph
+    invalidate_note_embedding(note_id)
     link_all_notes()
     export_graph(GRAPH_JSON)
     
     logger.info(f"Successfully updated note {note_id} at {dest_path}")
     return dest_path
+
+
+def search_notes_semantic(query: str, limit: int = 50, min_similarity: float = 0.10) -> list[dict]:
+    """
+    Search wiki notes using Hybrid AI Semantic Search:
+    Combines 384-dim vector embedding cosine similarity + title/body keyword matches.
+    Only returns notes meeting min_similarity threshold (default 0.10 / 10% match).
+    Returns list of dicts: [{'path': Path, 'meta': dict, 'body': str, 'similarity': float}]
+    """
+    if not query or not query.strip():
+        return []
+
+    from ask import retrieve_context
+    
+    context_notes = retrieve_context(query.strip(), top_k=limit)
+    if not context_notes:
+        return []
+
+    wiki_notes = list_wiki_notes()
+    results = []
+    for note in context_notes:
+        if note.get("similarity", 0.0) < min_similarity:
+            continue
+            
+        for note_path in wiki_notes:
+            meta, body = read_frontmatter(note_path)
+            nid = meta.get("id", note_path.stem)
+            if nid == note["id"]:
+                results.append({
+                    "path": note_path,
+                    "meta": meta,
+                    "body": body,
+                    "similarity": note["similarity"]
+                })
+                break
+
+    return results

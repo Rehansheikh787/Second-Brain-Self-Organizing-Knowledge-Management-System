@@ -83,7 +83,7 @@ def build_graph() -> dict:
                 degree_map[edge_key[0]] += 1
                 degree_map[edge_key[1]] += 1
 
-    # Build node structure for Cytoscape.js
+    # Build node structure for force-directed graph (Obsidian-style)
     for note in note_data_list:
         note_id = note["id"]
         nodes.append({
@@ -94,7 +94,8 @@ def build_graph() -> dict:
                 "tags": note["tags"],
                 "summary": note["body"][:150] + ("..." if len(note["body"]) > 150 else ""),
                 "body": note["body"],
-                "degree": degree_map.get(note_id, 0)
+                "degree": degree_map.get(note_id, 0),
+                "links": [l.get("id") for l in note["links"] if l.get("id") in id_map]
             }
         })
 

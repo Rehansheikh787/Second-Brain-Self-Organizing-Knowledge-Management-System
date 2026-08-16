@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Second Brain — Warm Editorial Knowledge OS</title>
+
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;0,6..72,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.28.1/cytoscape.min.js"></script>
+
+  <style>
+    :root {
+      --bg-page: #FAF8F5;
+      --bg-paper: #FFFFFF;
+      --bg-paper-subtle: #F4EFEA;
+      --bg-inset: #F0EAE1;
+      --bg-sidebar: #F5F1EB;
+      
+      --border-editorial: #E7E0D6;
+      --border-strong: #D6CCC0;
+
+      --ink-primary: #1C1917;
+      --ink-secondary: #44403C;
+      --ink-muted: #78716C;
+      --ink-faint: #A8A29E;
+
+      --para-projects: #C2410C;  /* Terracotta */
+      --para-areas: #7C3AED;     /* Deep Plum / Iris */
+      --para-resources: #1D4ED8; /* Oxford Indigo */
+      --para-archives: #4D7C0F;  /* Olive Moss */
+
+      --font-editorial: 'Newsreader', Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+
+      --shadow-paper-sm: 0 1px 2px rgba(44, 34, 24, 0.04);
+      --shadow-paper: 0 1px 3px rgba(44, 34, 24, 0.06), 0 6px 16px rgba(44, 34, 24, 0.03);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      color: var(--ink-primary);
+      background: var(--bg-page);
+      min-height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ---------- Sidebar ---------- */
+    aside {
+      width: 320px;
+      background: var(--bg-sidebar);
+      border-right: 1px solid var(--border-editorial);
+      padding: 1.8rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.4rem;
+      overflow-y: auto;
+      z-index: 10;
+    }
+
+    .brand-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-icon {
+      width: 42px; height: 42px;
+      background: var(--ink-primary);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      color: #FAF8F5;
+    }
+    .brand-title {
+      font-family: var(--font-editorial);
+      font-size: 1.3rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: -0.01em;
+    }
+    .brand-subtitle { font-size: 0.74rem; color: var(--ink-muted); font-family: var(--font-body); }
+
+    .sidebar-section {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-editorial);
+      border-radius: var(--radius-sm);
+      padding: 1.2rem;
+      box-shadow: var(--shadow-paper-sm);
+    }
+    .sidebar-section-title {
+      font-size: 0.74rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--ink-muted);
+      margin-bottom: 0.8rem;
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .input-field, .textarea-field {
+      width: 100%;
+      background: var(--bg-page);
+      border: 1px solid var(--border-editorial);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      color: var(--ink-primary);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      outline: none;
+      margin-bottom: 0.8rem;
+      transition: all 0.15s ease;
+    }
+    .input-field:focus, .textarea-field:focus {
+      border-color: var(--ink-primary);
+      box-shadow: 0 0 0 2px rgba(28, 25, 23, 0.08);
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      background: var(--ink-primary);
+      border: 1px solid var(--ink-primary);
+      border-radius: var(--radius-sm);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all 0.15s ease;
+    }
+    .btn-primary:hover {
+      background: #2E2A27;
+    }
+
+    /* ---------- Main Panel ---------- */
+    main {
+      flex: 1;
+      padding: 2rem 2.5rem;
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .header-box {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-editorial);
+      border-radius: var(--radius-md);
+      padding: 2rem 2.4rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-paper);
+      position: relative;
+    }
+    .header-box::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--para-projects), var(--para-areas), var(--para-resources));
+      border-top-left-radius: var(--radius-md); border-top-right-radius: var(--radius-md);
+    }
+
+    .title-editorial {
+      font-family: var(--font-editorial);
+      font-size: 2.5rem;
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: -0.02em;
+      color: var(--ink-primary);
+    }
+    .sub-banner { color: var(--ink-secondary); font-size: 0.95rem; margin-top: 4px; }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-secondary);
+      background: var(--bg-paper-subtle); border: 1px solid var(--border-editorial);
+      padding: 4px 12px; border-radius: 999px; margin-top: 12px;
+    }
+    .status-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--para-archives);
+    }
+
+    /* Bento Grid Metrics */
+    .bento-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 1.5rem;
+    }
+    .bento-card {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-editorial);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-paper-sm);
+      transition: all 0.2s ease;
+    }
+    .bento-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-paper);
+    }
+    .bento-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; color: var(--ink-muted); letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px; }
+    .bento-value { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 700; color: var(--ink-primary); margin-top: 6px; }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex; gap: 6px; background: var(--bg-paper-subtle);
+      padding: 6px; border-radius: var(--radius-sm); border: 1px solid var(--border-editorial);
+      margin-bottom: 1.5rem;
+    }
+    .tab-btn {
+      padding: 8px 18px; border-radius: 4px; border: 1px solid transparent;
+      background: transparent; color: var(--ink-secondary); font-weight: 600; font-size: 0.88rem;
+      cursor: pointer; transition: all 0.15s ease; display: flex; align-items: center; gap: 8px;
+    }
+    .tab-btn:hover { color: var(--ink-primary); background: rgba(255,255,255,0.6); }
+    .tab-btn.active {
+      background: var(--bg-paper);
+      color: var(--ink-primary); border-color: var(--border-editorial); box-shadow: var(--shadow-paper-sm);
+      font-weight: 700;
+    }
+
+    /* Content Cards */
+    .card-panel {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-editorial);
+      border-radius: var(--radius-md);
+      padding: 1.8rem;
+      box-shadow: var(--shadow-paper);
+      display: none;
+    }
+    .card-panel.active { display: block; }
+
+    .badge {
+      display: inline-flex; align-items: center; padding: 3px 10px;
+      border-radius: 4px; font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .badge-projects { background: #FFF1EE; color: var(--para-projects); border: 1px solid #FED7AA; }
+    .badge-areas    { background: #F5F3FF; color: var(--para-areas);    border: 1px solid #DDD6FE; }
+    .badge-resources{ background: #EFF6FF; color: var(--para-resources);border: 1px solid #BFDBFE; }
+    .badge-archives { background: #F7FEE7; color: var(--para-archives); border: 1px solid #D9F99D; }
+
+    #cy-graph {
+      width: 100%;
+      height: 520px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-page);
+      border: 1px solid var(--border-editorial);
+      background-image: radial-gradient(var(--border-strong) 0.75px, transparent 0.75px);
+      background-size: 24px 24px;
+    }
+
+    /* Chat */
+    .chat-box { display: flex; flex-direction: column; gap: 12px; }
+    .chat-msg {
+      background: var(--bg-paper);
+      border: 1px solid var(--border-editorial);
+      border-radius: var(--radius-sm);
+      padding: 14px 18px;
+      line-height: 1.6;
+      box-shadow: var(--shadow-paper-sm);
+    }
+    .chat-msg.user { border-left: 3px solid var(--para-resources); background: #F8FBFF; }
+    .chat-msg.ai { border-left: 3px solid var(--para-projects); background: #FFFDFB; }
+
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-page); }
+    ::-webkit-scrollbar-thumb { background: #D6CCC0; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #A8A29E; }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside>
+    <div class="brand-box">
+      <div class="brand-icon"><i data-lucide="book-open"></i></div>
+      <div>
+        <div class="brand-title">Second Brain</div>
+        <div class="brand-subtitle">Editorial Knowledge Base</div>
+      </div>
+    </div>
+
+    <!-- Quick Capture -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title"><i data-lucide="plus-circle" size="14"></i> Quick Capture</div>
+      <input type="text" class="input-field" placeholder="Note Title or URL..." />
+      <textarea class="textarea-field" rows="3" placeholder="Write thoughts, snippets or notes..."></textarea>
+      <button class="btn-primary"><i data-lucide="sparkles" size="16"></i> Capture to Brain</button>
+    </div>
+
+    <!-- Upload section -->
+    <div class="sidebar-section">
+      <div class="sidebar-section-title"><i data-lucide="upload" size="14"></i> Document Upload</div>
+      <input type="file" class="input-field" />
+      <button class="btn-primary" style="background: var(--ink-secondary);"><i data-lucide="file-text" size="16"></i> Ingest Document</button>
+    </div>
+  </aside>
+
+  <!-- MAIN PANEL -->
+  <main>
+    <!-- Header Banner -->
+    <div class="header-box">
+      <div class="title-editorial">Personal Knowledge Hub</div>
+      <div class="sub-banner">Self-Organizing PARA Framework • 384-Dim Vector Embeddings • RAG Query Engine</div>
+      <div class="status-chip"><span class="status-dot"></span>System Operational · High-Dimensional Semantic Network</div>
+    </div>
+
+    <!-- Bento Grid -->
+    <div class="bento-grid">
+      <div class="bento-card">
+        <div class="bento-label"><i data-lucide="database" size="14" style="color:var(--para-areas);"></i> Raw Captures</div>
+        <div class="bento-value">12</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-label"><i data-lucide="grid" size="14" style="color:var(--para-resources);"></i> Wiki Notes</div>
+        <div class="bento-value">37</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-label"><i data-lucide="link" size="14" style="color:var(--para-archives);"></i> Knowledge Links</div>
+        <div class="bento-value">48</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-label"><i data-lucide="git-branch" size="14" style="color:var(--para-projects);"></i> Projects / Areas</div>
+        <div class="bento-value">5 / 8</div>
+      </div>
+      <div class="bento-card">
+        <div class="bento-label"><i data-lucide="folder" size="14" style="color:var(--para-resources);"></i> Resources</div>
+        <div class="bento-value">18</div>
+      </div>
+    </div>
+
+    <!-- Nav Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" data-tab="graph"><i data-lucide="git-fork" size="16"></i> Interactive Graph</button>
+      <button class="tab-btn" data-tab="ask"><i data-lucide="message-square" size="16"></i> Ask Second Brain (RAG)</button>
+      <button class="tab-btn" data-tab="library"><i data-lucide="book-open" size="16"></i> Knowledge Library</button>
+      <button class="tab-btn" data-tab="analytics"><i data-lucide="bar-chart-3" size="16"></i> Brain Analytics</button>
+    </div>
+
+    <!-- Tab 1: Graph -->
+    <div class="card-panel active" id="tab-graph">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <h3 style="display:flex; align-items:center; gap:8px; font-family:var(--font-editorial); font-size:1.3rem;">
+          <i data-lucide="share-2" size="20" style="color: var(--para-resources);"></i> Neural Knowledge Network Topology
+        </h3>
+        <div style="display:flex; gap:8px;">
+          <span class="badge badge-projects">Projects</span>
+          <span class="badge badge-areas">Areas</span>
+          <span class="badge badge-resources">Resources</span>
+          <span class="badge badge-archives">Archives</span>
+        </div>
+      </div>
+      <div id="cy-graph"></div>
+    </div>
+
+    <!-- Tab 2: Ask Brain -->
+    <div class="card-panel" id="tab-ask">
+      <h3 style="margin-bottom:1rem; display:flex; align-items:center; gap:8px; font-family:var(--font-editorial); font-size:1.3rem;">
+        <i data-lucide="sparkles" size="20" style="color: var(--para-projects);"></i> Synthesize Knowledge with Multi-Turn RAG
+      </h3>
+      <div class="chat-box">
+        <div class="chat-msg user">
+          <strong>You:</strong> What Python notes do I have in my brain?
+        </div>
+        <div class="chat-msg ai">
+          <strong>Second Brain:</strong> Based on your personal notes, you have reference material covering:
+          <ul style="margin: 8px 0 8px 20px;">
+            <li><strong>Python Virtual Environments</strong> — Best practices with <code>venv</code> and dependency isolation.</li>
+            <li><strong>Pytest Testing Framework</strong> — Unit tests, test discovery, and assertions.</li>
+            <li><strong>FastAPI Microservices</strong> — Async endpoint patterns and Pydantic validation.</li>
+          </ul>
+          <div style="margin-top: 10px; font-size: 0.8rem; font-family:var(--font-mono); color: var(--para-resources);">
+            📌 Cited Sources: [Python Virtual Environments (94% match), Pytest Framework (88% match)]
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 3: Library -->
+    <div class="card-panel" id="tab-library">
+      <h3 style="margin-bottom:1rem; display:flex; align-items:center; gap:8px; font-family:var(--font-editorial); font-size:1.3rem;">
+        <i data-lucide="book-marked" size="20" style="color: var(--para-resources);"></i> Knowledge Library Explorer
+      </h3>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap:14px;">
+        <div style="background:var(--bg-page); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-editorial);">
+          <span class="badge badge-resources">Resources</span>
+          <h4 style="margin:8px 0 4px; font-size:1.1rem; font-family:var(--font-editorial);">Python Virtual Environments</h4>
+          <p style="font-size:0.85rem; color:var(--ink-secondary);">Isolated Python environments guide using built-in venv module.</p>
+          <div style="margin-top:10px; font-family:var(--font-mono); font-size:0.75rem; color:var(--para-resources);">#python #dev #backend</div>
+        </div>
+        <div style="background:var(--bg-page); padding:16px; border-radius:var(--radius-sm); border:1px solid var(--border-editorial);">
+          <span class="badge badge-projects">Projects</span>
+          <h4 style="margin:8px 0 4px; font-size:1.1rem; font-family:var(--font-editorial);">Second Brain System MVP</h4>
+          <p style="font-size:0.85rem; color:var(--ink-secondary);">Knowledge base architecture with PARA categorization and vector RAG.</p>
+          <div style="margin-top:10px; font-family:var(--font-mono); font-size:0.75rem; color:var(--para-projects);">#ai #rag #architecture</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab 4: Analytics -->
+    <div class="card-panel" id="tab-analytics">
+      <h3 style="margin-bottom:1rem; display:flex; align-items:center; gap:8px; font-family:var(--font-editorial); font-size:1.3rem;">
+        <i data-lucide="pie-chart" size="20" style="color: var(--para-areas);"></i> Knowledge Health & Balance
+      </h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+        <div style="background:var(--bg-page); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-editorial);">
+          <h4 style="margin-bottom:10px; font-family:var(--font-editorial); font-size:1.15rem;">PARA Categorization Balance</h4>
+          <p style="font-size:0.88rem; color:var(--ink-secondary); line-height:1.8; font-family:var(--font-mono);">
+            🔴 Projects: 5 (13%)<br>
+            🟣 Areas: 8 (22%)<br>
+            🔵 Resources: 18 (49%)<br>
+            🟢 Archives: 6 (16%)
+          </p>
+        </div>
+        <div style="background:var(--bg-page); padding:20px; border-radius:var(--radius-sm); border:1px solid var(--border-editorial);">
+          <h4 style="margin-bottom:10px; font-family:var(--font-editorial); font-size:1.15rem;">Vector Embedding Density</h4>
+          <p style="font-size:0.88rem; color:var(--ink-secondary); line-height:1.8; font-family:var(--font-mono);">
+            Average Semantic Similarity: <strong>0.76</strong><br>
+            Average Connections / Note: <strong>2.6</strong><br>
+            Orphaned Notes: <strong>0 (All Connected)</strong>
+          </p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    lucide.createIcons();
+
+    // Tab Navigation Logic
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.card-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        const target = btn.dataset.tab;
+        document.getElementById(`tab-${target}`).classList.add('active');
+        if (target === 'graph' && window.cyDemo) {
+          window.cyDemo.resize();
+          window.cyDemo.fit();
+        }
+      });
+    });
+
+    // Initialize Cytoscape.js demo network
+    window.cyDemo = cytoscape({
+      container: document.getElementById('cy-graph'),
+      elements: [
+        { data: { id: 'n1', label: 'Python Virtual Env', cat: 'Resources' } },
+        { data: { id: 'n2', label: 'Second Brain MVP', cat: 'Projects' } },
+        { data: { id: 'n3', label: 'Pytest Framework', cat: 'Resources' } },
+        { data: { id: 'n4', label: 'Engineering Standards', cat: 'Areas' } },
+        { data: { id: 'n5', label: 'Semantic Embeddings', cat: 'Resources' } },
+        { data: { id: 'n6', label: 'Vector Cosine Search', cat: 'Resources' } },
+        { data: { id: 'e1', source: 'n1', target: 'n2' } },
+        { data: { id: 'e2', source: 'n3', target: 'n1' } },
+        { data: { id: 'e3', source: 'n4', target: 'n2' } },
+        { data: { id: 'e4', source: 'n5', target: 'n6' } },
+        { data: { id: 'e5', source: 'n6', target: 'n2' } }
+      ],
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'background-color': '#FFFFFF',
+            'border-width': 2,
+            'border-color': '#1C1917',
+            'label': 'data(label)',
+            'color': '#1C1917',
+            'font-family': 'Plus Jakarta Sans',
+            'font-size': '11px',
+            'font-weight': '600',
+            'text-valign': 'bottom',
+            'text-margin-y': '6px'
+          }
+        },
+        {
+          selector: 'edge',
+          style: {
+            'width': 1.5,
+            'line-color': '#D6CCC0',
+            'curve-style': 'bezier',
+            'target-arrow-shape': 'triangle',
+            'target-arrow-color': '#D6CCC0'
+          }
+        }
+      ],
+      layout: { name: 'cose', animate: true, padding: 50 }
+    });
+  </script>
+</body>
+</html>

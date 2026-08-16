@@ -90,3 +90,49 @@ def test_ask_synthesizes_answer_with_citations():
             assert len(res["sources"]) == 1
             assert res["sources"][0]["id"] == "note1"
             assert "Virtual environments isolate" in res["answer"]
+
+
+def test_ask_with_conversation_history():
+    from ask import ask
+    from utils import write_frontmatter
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        wiki_dir = Path(tmpdir) / "wiki"
+        wiki_dir.mkdir()
+        res_dir = wiki_dir / "Resources"
+        res_dir.mkdir()
+        embeddings_file = Path(tmpdir) / "embeddings.npz"
+
+        note1_path = res_dir / "note1.md"
+        write_frontmatter(note1_path, {
+            "id": "note1", "title": "Python Virtual Environments", "category": "Resources",
+            "tags": ["python"], "created": "2026-01-01", "source_type": "note",
+            "links": [], "embedding_version": "test"
+        }, "Virtual environments manage isolated package spaces.")
+
+        v1 = np.ones(384, dtype=np.float32)
+        np.savez(embeddings_file, ids=np.array(["note1"]), vectors=np.array([v1]))
+
+        mock_llm_response = {
+            "answer": "In simpler terms, it keeps your project tools separate.",
+            "citations": ["note1"]
+        }
+
+        history = [
+            {"role": "user", "content": "What is Python venv?"},
+            {"role": "assistant", "content": "Virtual environments manage isolated package spaces."}
+        ]
+
+        with patch('ask.WIKI_DIR', wiki_dir), \
+             patch('utils.WIKI_DIR', wiki_dir), \
+             patch('ask.EMBEDDINGS_FILE', embeddings_file), \
+             patch('link.EMBEDDINGS_FILE', embeddings_file), \
+             patch('ask.compute_embedding', return_value=v1), \
+             patch('ask.call_groq', return_value=mock_llm_response):
+
+            res = ask("Explain simply", conversation_history=history, top_k=1)
+
+            assert "answer" in res
+            assert "sources" in res
+            assert len(res["sources"]) == 1
+            assert "separate" in res["answer"]

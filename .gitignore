@@ -9,6 +9,9 @@ build/
 .venv/
 .streamlit/secrets.toml
 
+node_modules/
+scratch/
+.claude/
 .claude-flow/
 .superpowers/
 .swarm/

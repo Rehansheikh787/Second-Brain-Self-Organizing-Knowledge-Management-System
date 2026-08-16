@@ -1,0 +1,20 @@
+{
+  "name": "second-brain",
+  "version": "1.0.0",
+  "description": "A personal knowledge management system that captures notes, auto-classifies them using the **PARA framework** via Groq LLM (`llama-3.3-70b-versatile`), computes bidirectional semantic links via sentence-transformers (`all-MiniLM-L6-v2`), visualizes notes as an interactive Cytoscape.js graph, and answers natural language questions with source citations via RAG — deployed as a Streamlit web application.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "playwright": "^1.62.1"
+  }
+}

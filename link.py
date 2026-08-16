@@ -1,4 +1,4 @@
-﻿"""Embedding computation & auto-linking — find related notes and link them bidirectionally."""
+"""Embedding computation & auto-linking — find related notes and link them bidirectionally."""
 
 import logging
 import numpy as np
@@ -14,15 +14,17 @@ _model = None
 
 
 class FallbackEmbedder:
-    """Fallback vectorizer when PyTorch/SentenceTransformers DLLs are unavailable on host."""
+    """Fallback vectorizer using 384-dimensional HashingVectorizer with n-grams."""
+    def __init__(self):
+        from sklearn.feature_extraction.text import HashingVectorizer
+        self.vectorizer = HashingVectorizer(n_features=384, norm='l2', alternate_sign=False, ngram_range=(1, 2))
+
     def encode(self, texts, convert_to_numpy=True):
         if isinstance(texts, str):
             texts = [texts]
         if not texts:
             return np.array([]).reshape(0, 384)
-        from sklearn.feature_extraction.text import HashingVectorizer
-        vectorizer = HashingVectorizer(n_features=384, norm='l2', alternate_sign=False)
-        X = vectorizer.fit_transform(texts).toarray().astype(np.float32)
+        X = self.vectorizer.transform(texts).toarray().astype(np.float32)
         return X if len(texts) > 1 else X[0] if not isinstance(texts, list) else X
 
 
@@ -37,6 +39,16 @@ def _get_model():
             logger.warning(f"SentenceTransformer unavailable ({e}), using FallbackEmbedder")
             _model = FallbackEmbedder()
     return _model
+
+
+def invalidate_note_embedding(note_id: str) -> None:
+    """Purge a note's vector from embeddings.npz so it gets recomputed on next update."""
+    stored_ids, stored_vectors = load_embeddings()
+    if note_id in stored_ids:
+        idx = stored_ids.index(note_id)
+        new_ids = [nid for i, nid in enumerate(stored_ids) if i != idx]
+        new_vectors = np.delete(stored_vectors, idx, axis=0) if stored_vectors.shape[0] > 0 else stored_vectors
+        save_embeddings(new_ids, new_vectors)
 
 
 def compute_embeddings(texts: list[str]) -> np.ndarray:
@@ -112,10 +124,27 @@ def find_similar(
     return sorted(results, key=lambda x: x["similarity"], reverse=True)
 
 
+import re
+
+STOP_WORDS = {
+    "what", "are", "is", "the", "a", "an", "and", "or", "in", "of", "to", "for",
+    "with", "how", "do", "does", "can", "why", "where", "this", "that", "it",
+    "from", "have", "note", "document", "file", "using", "your", "my", "you",
+    "was", "were", "been", "being", "which", "when", "who", "whom", "will", "would"
+}
+
+
+def extract_domain_keywords(text: str) -> set[str]:
+    """Extract meaningful non-stopword tokens (min length 3)."""
+    words = set(re.findall(r"\b[a-zA-Z0-9_-]{3,}\b", text.lower()))
+    return words - STOP_WORDS
+
+
 def link_all_notes() -> int:
     """
     Batch compute embeddings for new notes and calculate bidirectional
-    links using normalized matrix dot-products.
+    links using normalized matrix dot-products with domain keyword filtering
+    and a top-3 links per note cap.
     """
     wiki_notes = list_wiki_notes()
     if not wiki_notes:
@@ -126,6 +155,7 @@ def link_all_notes() -> int:
     
     all_ids = []
     all_vectors_list = []
+    note_data = []
     new_texts = []
     new_indices = []
     
@@ -134,6 +164,8 @@ def link_all_notes() -> int:
         meta, body = read_frontmatter(note_path)
         note_id = meta.get("id", note_path.stem)
         all_ids.append(note_id)
+        keywords = extract_domain_keywords(f"{meta.get('title', '')} {body}")
+        note_data.append({"id": note_id, "path": note_path, "meta": meta, "body": body, "keywords": keywords})
         
         if note_id in id_to_index:
             old_idx = id_to_index[note_id]
@@ -165,37 +197,37 @@ def link_all_notes() -> int:
     
     new_links = 0
     
-    for i, note_path in enumerate(wiki_notes):
-        meta, body = read_frontmatter(note_path)
-        source_id = all_ids[i]
+    for i, note in enumerate(note_data):
+        source_id = note["id"]
+        source_kw = note["keywords"]
         
         # Extract row similarities, mask out self-link
         row_sims = sim_matrix[i].copy()
         row_sims[i] = -1.0
         
-        # Find candidates >= SIMILARITY_THRESHOLD
-        match_indices = np.where(row_sims >= SIMILARITY_THRESHOLD)[0]
-        
-        similar = [
-            {"id": all_ids[j], "similarity": round(float(row_sims[j]), 4)}
-            for j in match_indices
-        ]
-        similar.sort(key=lambda x: x["similarity"], reverse=True)
-        
-        existing_links = {link["id"] for link in meta.get("links", [])}
-        updated_links = list(meta.get("links", []))
-        
-        for match in similar:
-            if match["id"] not in existing_links:
-                updated_links.append(match)
-                new_links += 1
+        # Find candidate matches >= threshold with keyword verification
+        candidates = []
+        for j in range(N):
+            if j == i:
+                continue
+            sim = float(row_sims[j])
+            cand_kw = note_data[j]["keywords"]
+            shared_kw = source_kw & cand_kw
+            
+            # Require either high vector similarity (>=0.55) or decent similarity (>=0.40) + shared domain keyword
+            if sim >= 0.58 or (sim >= 0.38 and len(shared_kw) >= 1):
+                candidates.append({"id": note_data[j]["id"], "similarity": round(sim, 4)})
                 
-        if len(updated_links) != len(meta.get("links", [])):
-            meta["links"] = updated_links
-            write_frontmatter(note_path, meta, body)
+        candidates.sort(key=lambda x: x["similarity"], reverse=True)
+        top_links = candidates[:3]  # Cap to top 3 most relevant links
+        
+        meta = note["meta"]
+        meta["links"] = top_links
+        write_frontmatter(note["path"], meta, note["body"])
+        new_links += len(top_links)
             
     print(f"  Processed {len(wiki_notes)} notes ({len(new_texts)} new)")
-    print(f"  Created {new_links} new links")
+    print(f"  Established {new_links} total precision links")
     
     return new_links
 

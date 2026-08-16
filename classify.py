@@ -1,4 +1,4 @@
-﻿"""PARA classification via LLM — auto-classify raw captures into structured wiki notes."""
+"""PARA classification via LLM — auto-classify raw captures into structured wiki notes."""
 
 import logging
 from pathlib import Path
@@ -28,20 +28,51 @@ def classify_note(raw_path: Path) -> Path:
     """
     Read raw capture, send to LLM for classification,
     parse response, write structured Markdown to wiki/<uuid>.md.
+    Falls back gracefully to heuristic metadata if LLM call fails.
     
     Returns: Path to the created wiki note.
     """
+    import re
     raw_data = load_json(raw_path)
     content = raw_data["content"]
     note_id = raw_data["id"]
     
-    # Call LLM for classification
-    result = call_groq(
-        system_prompt=CLASSIFY_SYSTEM_PROMPT,
-        user_content=content,
-        temperature=CLASSIFY_TEMPERATURE,
-        max_tokens=CLASSIFY_MAX_TOKENS
-    )
+    # Call LLM for classification with fallback safety
+    try:
+        result = call_groq(
+            system_prompt=CLASSIFY_SYSTEM_PROMPT,
+            user_content=content,
+            temperature=CLASSIFY_TEMPERATURE,
+            max_tokens=CLASSIFY_MAX_TOKENS
+        )
+    except Exception as e:
+        logger.warning(f"LLM classification failed for {note_id} ({e}). Using heuristic fallback.")
+        lines = [l.strip() for l in content.split("\n") if l.strip()]
+        first_line = lines[0] if lines else "Captured Note"
+        clean_first_line = re.sub(r"^#+\s*", "", first_line).strip()
+        fallback_title = clean_first_line[:80] if clean_first_line else "Captured Note"
+        
+        # Keyword heuristics for PARA method
+        content_lower = content.lower()
+        if any(w in content_lower for w in ["deadline", "milestone", "todo", "launch", "jira", "sprint", "task", "project"]):
+            cat = "Projects"
+        elif any(w in content_lower for w in ["responsibility", "routine", "health", "finance", "habit", "annual", "area"]):
+            cat = "Areas"
+        elif any(w in content_lower for w in ["archive", "completed", "old", "done", "deprecated", "past"]):
+            cat = "Archives"
+        else:
+            cat = "Resources"
+
+        # Extract top words for tags
+        words = [w for w in re.findall(r"\b[a-zA-Z]{4,}\b", content_lower) if w not in {"this", "that", "with", "from", "have", "note"}]
+        fallback_tags = list(dict.fromkeys(words[:4])) or ["captured"]
+        
+        result = {
+            "category": cat,
+            "title": fallback_title,
+            "tags": fallback_tags,
+            "summary": fallback_title
+        }
     
     # Validate and sanitize category
     category = result.get("category", "Resources")

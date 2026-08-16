@@ -1,4 +1,4 @@
-﻿import tempfile
+import tempfile
 import json
 from pathlib import Path
 from unittest.mock import patch
@@ -137,3 +137,33 @@ def test_get_backlinks():
             assert backlinks[0]["similarity"] == 0.85
             assert backlinks[1]["id"] == "note3"
             assert backlinks[1]["similarity"] == 0.62
+
+
+def test_search_notes_semantic():
+    from manage_notes import search_notes_semantic
+    from utils import write_frontmatter
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        wiki_dir = Path(tmpdir) / "wiki"
+        wiki_dir.mkdir()
+        res_dir = wiki_dir / "Resources"
+        res_dir.mkdir()
+
+        note1_path = res_dir / "note1.md"
+        write_frontmatter(note1_path, {
+            "id": "note1", "title": "Python Asyncio", "category": "Resources"
+        }, "Asyncio handles event loops.")
+
+        mock_context = [{
+            "id": "note1", "title": "Python Asyncio", "category": "Resources",
+            "content": "Asyncio handles event loops.", "similarity": 0.88
+        }]
+
+        with patch("manage_notes.list_wiki_notes", return_value=[note1_path]), \
+             patch("utils.WIKI_DIR", wiki_dir), \
+             patch("ask.retrieve_context", return_value=mock_context):
+
+            results = search_notes_semantic("concurrency")
+            assert len(results) == 1
+            assert results[0]["meta"]["id"] == "note1"
+            assert results[0]["similarity"] == 0.88

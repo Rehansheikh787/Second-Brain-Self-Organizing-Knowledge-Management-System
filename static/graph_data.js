@@ -2,131 +2,198 @@ window.GRAPH_DATA = {
   "nodes": [
     {
       "data": {
-        "id": "c825243a-5b13-4297-8fff-14adaa392443",
-        "label": "Completed physics exam notes",
-        "category": "Archives",
+        "id": "84c68d33-658c-46d8-b494-200b8dd57be2",
+        "label": "Gym Workout Routine",
+        "category": "Areas",
         "tags": [
-          "College",
-          "Physics",
-          "Exam Notes",
-          "2023"
+          "Health",
+          "Fitness",
+          "Gym"
         ],
-        "summary": "Archive: Completed College Semester 1 Physics Course Exam Notes 2023",
-        "body": "Archive: Completed College Semester 1 Physics Course Exam Notes 2023",
-        "degree": 0
+        "summary": "Area: Personal Health and Weekly Gym Workout Routine tracking",
+        "body": "Area: Personal Health and Weekly Gym Workout Routine tracking",
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
-        "id": "84c68d33-658c-46d8-b494-200b8dd57be2",
-        "label": "Personal health tracking",
+        "id": "c1ffbd23-579c-40bf-9abb-5569ad61457d",
+        "label": "Coding",
         "category": "Areas",
         "tags": [
-          "health",
-          "fitness",
-          "workout",
-          "routine"
+          "Programming",
+          "Development",
+          "Coding"
         ],
-        "summary": "Area: Personal Health and Weekly Gym Workout Routine tracking",
-        "body": "Area: Personal Health and Weekly Gym Workout Routine tracking",
-        "degree": 0
+        "summary": "i am currently doing coding",
+        "body": "i am currently doing coding",
+        "degree": 0,
+        "links": []
+      }
+    },
+    {
+      "data": {
+        "id": "d2efca7c-e2ce-4da1-8a2c-d0ba33b1ea95",
+        "label": "Mumbai Location",
+        "category": "Areas",
+        "tags": [
+          "Mumbai",
+          "Location",
+          "India"
+        ],
+        "summary": "i am currently in mumbai",
+        "body": "i am currently in mumbai",
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "17b04108-617d-444a-9ed2-b2966c49f650",
-        "label": "Build Second Brain MVP",
+        "label": "Second Brain MVP",
         "category": "Projects",
         "tags": [
-          "Second Brain",
+          "Web Development",
           "MVP",
-          "Web Development"
+          "Second Brain"
         ],
         "summary": "Project: Build Second Brain Web MVP release v1.0 by end of July",
         "body": "Project: Build Second Brain Web MVP release v1.0 by end of July",
-        "degree": 0
+        "degree": 0,
+        "links": []
+      }
+    },
+    {
+      "data": {
+        "id": "caeb0e5c-3629-48c5-8b35-9c8e9b1c8fdb",
+        "label": "US-Iran Conflict",
+        "category": "Projects",
+        "tags": [
+          "Iran",
+          "US",
+          "Conflict",
+          "Politics"
+        ],
+        "summary": "Iran attacks US forces in Jordan as Trump meets Netanyahu",
+        "body": "Iran attacks US forces in Jordan as Trump meets Netanyahu",
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "0017ee9d-fbc6-4dae-aa74-d72482743912",
-        "label": "Python virtual environment",
+        "label": "Python Virtual Env",
         "category": "Resources",
         "tags": [
           "Python",
           "Virtual Environment",
-          "Programming"
+          "Packages"
         ],
         "summary": "A Python virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number ...",
         "body": "A Python virtual environment is a self-contained directory tree that contains a Python installation for a particular version of Python, plus a number of additional packages.",
-        "degree": 1
+        "degree": 2,
+        "links": [
+          "d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+          "171db0fe-fbf3-409b-aa28-dfee7c369b2b"
+        ]
       }
     },
     {
       "data": {
         "id": "0380c3b5-f9d9-4ee8-a373-4c76bc961e7d",
-        "label": "Pytest testing framework",
+        "label": "Pytest Framework",
         "category": "Resources",
         "tags": [
-          "pytest",
           "testing",
-          "framework"
+          "python",
+          "pytest"
         ],
         "summary": "https://pytest.org/ - The pytest framework makes it easy to write small, readable tests, and can scale to support complex functional testing for appli...",
         "body": "https://pytest.org/ - The pytest framework makes it easy to write small, readable tests, and can scale to support complex functional testing for applications and libraries.",
-        "degree": 0
+        "degree": 1,
+        "links": [
+          "d396b987-6789-4a05-9f5b-b9f8f523ea72"
+        ]
       }
     },
     {
       "data": {
         "id": "171db0fe-fbf3-409b-aa28-dfee7c369b2b",
-        "label": "pip package installer",
+        "label": "pip Installer",
         "category": "Resources",
         "tags": [
           "Python",
           "pip",
-          "PyPI",
-          "packages"
+          "PyPI"
         ],
         "summary": "pip is the package installer for Python. You can use pip to install packages from the Python Package Index (PyPI) and other indexes.",
         "body": "pip is the package installer for Python. You can use pip to install packages from the Python Package Index (PyPI) and other indexes.",
-        "degree": 1
+        "degree": 2,
+        "links": [
+          "0017ee9d-fbc6-4dae-aa74-d72482743912",
+          "d26acfb0-eeb7-47db-95f2-9e43fdcc4874"
+        ]
       }
     },
     {
       "data": {
         "id": "1bca3859-1c80-4521-90ab-24a79ba99ff6",
-        "label": "Graph library",
+        "label": "Cytoscape.js",
         "category": "Resources",
         "tags": [
-          "Cytoscape.js",
           "graph theory",
-          "visualization"
+          "visualization",
+          "library"
         ],
         "summary": "Cytoscape.js is a graph theory library for visualization and analysis. It can handle large interactive graphs in the browser.",
         "body": "Cytoscape.js is a graph theory library for visualization and analysis. It can handle large interactive graphs in the browser.",
-        "degree": 0
+        "degree": 0,
+        "links": []
+      }
+    },
+    {
+      "data": {
+        "id": "1c91f982-96e6-4cdb-a27f-b0550a89e8d9",
+        "label": "PM Mock Interview",
+        "category": "Resources",
+        "tags": [
+          "Product Management",
+          "Interview",
+          "Mock"
+        ],
+        "summary": "# PDF Document: PM Prompt.pdf\n\nYou  are  an  experienced  Product  Management  interviewer  conducting  a  live,  spoken  mock  \ninterview\n \nwith\n \nme...",
+        "body": "# PDF Document: PM Prompt.pdf\n\nYou  are  an  experienced  Product  Management  interviewer  conducting  a  live,  spoken  mock  \ninterview\n \nwith\n \nme\n \nfor\n \nthe\n \nrole\n \ndescribed\n \nin\n \nthe\n \njob\n \ndescription\n \nbelow.\n \nWe\n \nare\n \ntalking\n \nover\n \nvoice,\n \nso\n \nbehave\n \nlike\n \na\n \nreal\n \nhuman\n \ninterviewer\n \nin\n \na\n \nreal\n \nconversation.\n  ===  MY  RESUME  ===  [PASTE  YOUR  RESUME  HERE]   ===  COMPANY  /  ROLE  JOB  DESCRIPTION  ===  [PASTE  THE  JD  HERE]   YOUR  ROLE  AND  BEHAVIOR:  -  Interview  me  for  THIS  specific  role  at  THIS  company.  Tailor  questions  to  the  JD's  \nresponsibilities,\n \nrequired\n \nskills,\n \nseniority\n \nlevel,\n \nand\n \nthe\n \ncompany's\n \nproduct/domain.\n -  Use  my  resume  to  probe  my  actual  experience:  dig  into  specific  projects,  decisions,  \nmetrics,\n \nand\n \ntrade-offs\n \nI\n \nmention\n \non\n \nit.\n -  Speak  naturally  and  conversationally,  the  way  a  real  interviewer  would  over  a  call.  Keep  \nyour\n \nturns\n \nshort.\n \nAsk\n \nONE\n \nquestion\n \nat\n \na\n \ntime,\n \nthen\n \nSTOP\n \nand\n \nwait\n \nfor\n \nmy\n \nspoken\n \nanswer.\n \nNever\n \nanswer\n \nyour\n \nown\n \nquestions\n \nor\n \nmove\n \non\n \nbefore\n \nI\n \nrespond.\n -  Ask  realistic  follow-ups  based  on  what  I  actually  say  (\"Why  did  you  choose  that?\",  \"What  \nwas\n \nthe\n \nimpact?\",\n \n\"How\n \nwould\n \nyou\n \nhandle\n \nit\n \nif\n \nX?\").\n \nPush\n \nfor\n \nspecifics,\n \nmetrics,\n \nand\n \nreasoning\n \nlike\n \na\n \ntough-but-fair\n \ninterviewer.\n -  Do  not  coach,  correct,  or  give  feedback  DURING  the  interview.  Stay  in  character  as  the  \ninterviewer\n \nuntil\n \nthe\n \nend.\n  INTERVIEW  STRUCTURE  (adapt  length  to  the  role's  seniority):  1.  Brief  warm-up  /  \"tell  me  about  yourself\"  +  why  this  role/company.  2.  Behavioral  &  leadership  questions  (use  the  STAR-style  probing;  tie  to  JD  competencies).  3.  Product  sense  /  design  question  (relevant  to  the  company's  product  or  domain).  4.  Analytical  /  metrics  /  execution  question  (prioritization,  tradeoffs,  defining  success  \nmetrics).\n 5.  Strategy  or  estimation  question  if  appropriate  for  the  seniority.  6.  A  chance  for  me  to  ask  you  (the  \"interviewer\")  questions.   PACING:  -  Aim  for  roughly  [SET  A  NUMBER,  e.g.  8–10]  questions  total,  or  run  until  I  say  \"let's  wrap  \nup.\"\n -  If  I  struggle  or  go  silent,  wait,  then  optionally  offer  a  small  nudge  —  but  keep  it  realistic.   AT  THE  END  (only  when  I  say  we're  done,  or  after  the  final  question):  -  Break  character  and  give  me  structured  feedback:    •  Overall  impression  and  a  rough  hire  signal  (strong  hire  /  hire  /  lean  no  /  no  hire)  with  \nreasoning.\n   •  Strengths,  mapped  to  the  JD.    •  Specific  gaps  or  weak  answers,  with  what  a  stronger  answer  would  have  included.    •  3–5  concrete  things  to  improve  before  the  real  interview.    •  One  or  two  example  answers  rewritten  well,  using  my  real  background.   \n\nStart  now  by  greeting  me  and  asking  your  first  question.  Wait  for  my  spoken  reply  before  \ncontinuing.",
+        "degree": 2,
+        "links": [
+          "a70619b5-5f7a-48ac-baac-0218521d45ce",
+          "395af814-f27f-4095-98a1-759de2fcda5c"
+        ]
       }
     },
     {
       "data": {
         "id": "20139372-1c45-426c-8a55-01736f9baeaa",
-        "label": "NumPy for math ops",
+        "label": "NumPy Library",
         "category": "Resources",
         "tags": [
-          "NumPy",
           "Python",
-          "Math"
+          "Math",
+          "Array"
         ],
         "summary": "NumPy is used for efficient mathematical operations and array manipulations in Python.",
         "body": "NumPy is used for efficient mathematical operations and array manipulations in Python.",
-        "degree": 0
+        "degree": 1,
+        "links": [
+          "d26acfb0-eeb7-47db-95f2-9e43fdcc4874"
+        ]
       }
     },
     {
       "data": {
         "id": "2884b2ef-e4f7-46cb-985f-f727d55625ff",
-        "label": "Python JSON parsing",
+        "label": "Python JSON Parsing",
         "category": "Resources",
         "tags": [
           "Python",
@@ -135,29 +202,49 @@ window.GRAPH_DATA = {
         ],
         "summary": "JSON files in Python can be quickly parsed using the built-in json module: json.loads() and json.dumps()",
         "body": "JSON files in Python can be quickly parsed using the built-in json module: json.loads() and json.dumps()",
-        "degree": 0
+        "degree": 0,
+        "links": []
+      }
+    },
+    {
+      "data": {
+        "id": "395af814-f27f-4095-98a1-759de2fcda5c",
+        "label": "Router & Parallel Workflows",
+        "category": "Resources",
+        "tags": [
+          "n8n",
+          "agentic workflows",
+          "AI PM"
+        ],
+        "summary": "<div align=\"center\">\n\n# 🧭 Router & Parallel Agentic Workflows — n8n\n\n### Two multi-agent patterns solving opposite problems: dispatching to exactly on...",
+        "body": "<div align=\"center\">\n\n# 🧭 Router & Parallel Agentic Workflows — n8n\n\n### Two multi-agent patterns solving opposite problems: dispatching to exactly one specialist vs. running several analyses at once\n\n![Tool](https://img.shields.io/badge/Tool-n8n-6C5CE7?style=flat-square)\n![Model](https://img.shields.io/badge/Model-Gemini-0984E3?style=flat-square)\n![Pattern](https://img.shields.io/badge/Pattern-Router%20%2B%20Parallel-00B894?style=flat-square)\n![Type](https://img.shields.io/badge/Type-Hands--on%20AI%20PM%20Build-E17055?style=flat-square)\n\n**[⬇️ Content Dispatcher Workflow](assets/content-request-dispatcher.json) · [⬇️ Review Analyzer Workflow](assets/product-review-analyzer.json)**\n\n</div>\n\n---\n\n## TL;DR\n\nTwo more multi-agent patterns from the same workshop series as my [Serial workflows](https://github.com/Rehansheikh787) — but these solve the opposite kind of problem. The **Content Request Dispatcher** reads one content brief and routes it to exactly **one** of four specialist writer agents (blog, social, email, or image prompt) — only one path ever fires. The **Product Review Analyzer** takes one customer review and runs **three** independent agents on it *simultaneously* — sentiment, feature mentions, complaint classification — then merges all three results into one structured record. Router picks one path; Parallel runs every path at once. Knowing which situation calls for which is the actual design skill.\n\n**My role:** hands-on builder — designed the classification/routing logic, the three parallel analysis prompts, the merge/parsing logic, and tested both workflows end to end with real briefs and reviews.\n\n---\n\n## 📖 Table of Contents\n\n- [Router vs. Parallel — Why the Distinction Matters](#-router-vs-parallel--why-the-distinction-matters)\n- [Build 1 — Content Request Dispatcher (Router)](#-build-1--content-request-dispatcher-router)\n- [Build 2 — Product Review Analyzer (Parallel)](#-build-2--product-review-analyzer-parallel)\n- [Design Decisions That Mattered](#-design-decisions-that-mattered)\n- [What This Demonstrates](#-what-this-demonstrates)\n\n---\n\n## 🔍 Router vs. Parallel — Why the Distinction Matters\n\nThese look similar on the surface — both fan out to multiple specialist agents — but they solve genuinely different problems:\n\n| | Router (Build 1) | Parallel (Build 2) |\n|---|---|---|\n| **How many agents run per request?** | Exactly 1, chosen by a classifier | All of them, every time |\n| **Are the outputs related?** | No — only one output is ever produced | Yes — all outputs describe the same input from different angles |\n| **Best for** | \"This request is *one of* several types\" | \"I need several *independent* answers about the same thing, and don't want to wait for them one-by-one\" |\n| **Failure mode to design for** | Classifier picks the wrong / no route | One branch is slow or fails while others succeed |\n\nPicking the wrong pattern for the problem is a real design mistake — running 4 agents in parallel when only one output is ever needed wastes cost and latency for nothing; forcing a single classifier to pick \"the one true category\" for a review that's genuinely about sentiment *and* features *and* a complaint would lose information a Parallel analysis captures naturally.\n\n---\n\n## 📨 Build 1 — Content Request Dispatcher (Router)\n\nPaste a content brief in chat — \"write a blog post about our new savings feature\" — and a Manager agent classifies it into exactly one of four content types, then routes to that one specialist.\n\n```mermaid\nflowchart LR\n    A[Content brief] --> B[Manager Agent\\nclassify: blog/social/email/image]\n    B --> C[Normalize Route\\nfallback → blog]\n    C --> D{Switch}\n    D -->|blog| E[Blog Writer Agent]\n    D -->|social| F[Social Post Writer Agent]\n    D -->|email| G[Email Writer Agent]\n    D -->|image| H[Image Prompt Generator Agent]\n    E & F & G & H --> I[Format Output]\n    I --> J[Merge Outputs\\none final response]\n```\n\n**Real prompt — Manager Agent**, deliberately constrained to a single-word output so routing logic downstream never has to parse prose:\n\n```text\nYou are the MANAGER agent in a content team.\n\nDecide which ONE specialist should handle this brief, based on the\nformat the brief is asking for:\n- \"blog\" - blog post, article, or long-form written piece\n- \"social\" - social media post, tweet, LinkedIn post, or caption\n- \"email\" - email, newsletter, or email campaign copy\n- \"image\" - visual, image, banner, illustration, or graphic\n\nIf the brief is ambiguous or asks for multiple things, pick the\nPRIMARY deliverable type.\n\nRespond with ONLY one word, exactly one of: blog, social, email, image\nNo punctuation, no explanation, no extra text.\n```\n\nEach of the four specialists has its own distinct prompt tuned to its format — the Blog Writer asks for 3-5 subheadings and 250-400 words; the Social Writer asks for *two* versions (LinkedIn *and* Twitter/X, different length constraints for each); the Email Writer asks for subject line + preview text + body under 200 words; the Image Prompt Generator asks for subject, composition, color palette, and mood in 2-4 sentences. One Manager, four genuinely different writing jobs.\n\n**See it in action** — a real brief classified and routed to a specialist end to end:\n\n<p align=\"center\">\n<img src=\"assets/dispatcher-demo.webp\" width=\"900\" alt=\"Content Request Dispatcher routing a brief to a specialist writer agent in n8n\" />\n</p>\n\n<p align=\"center\"><sub><a href=\"assets/dispatcher-demo-full.mp4\">▶️ Full-length version (dispatcher-demo-full.mp4)</a></sub></p>\n\n---\n\n## ⭐ Build 2 — Product Review Analyzer (Parallel)\n\nPaste any customer review, and three independent agents analyze it **at the same time** — sentiment, feature mentions, and complaint classification — instead of running one after another. A Merge node waits for all three, then a code node combines them into one clean structured record.\n\n```mermaid\nflowchart LR\n    A[Customer review] --> B[Set Review Text]\n    B --> C[Sentiment Agent]\n    B --> D[Feature Mentions Agent]\n    B --> E[Complaint Category Agent]\n    C & D & E --> F[Merge — wait for all 3]\n    F --> G[Combine Into\\nStructured Summary]\n    G --> H[(Optional: append\\nto Google Sheet)]\n```\n\nAll three agents run at `temperature 0` and are locked to an exact response template — not because creativity is undesirable, but because a downstream regex parser needs a predictable format to extract from:\n\n```text\nSentiment Agent:\nSentiment: <Positive / Negative / Mixed>\nSentiment Score: <-1.0 to 1.0>\nReasoning: <one short sentence>\n\nFeature Mentions Agent:\nFeatures Mentioned: <comma-separated list, or \"None\">\nPrimary Feature: <the single most central feature, or \"None\">\n\nComplaint Category Agent:\nHas Complaint: <Yes / No>\nComplaint Category: <Delivery Delay / Product Quality / Payment Issue /\n  Refund-Cancellation / App-Tech Issue / Customer Support / Pricing /\n  Safety-Trust / Other / \"None\">\nSeverity: <Low / Medium / High, or \"None\">\n```\n\nThe output is written as one structured record — `sentiment`, `sentiment_score`, `features_mentioned`, `primary_feature`, `has_complaint`, `complaint_category`, `severity` — ready to append to a spreadsheet for trend analysis across hundreds of reviews, not just a one-off answer.\n\n**See it in action** — a real review analyzed across all three dimensions simultaneously, with the Google Sheet logging visible:\n\n<p align=\"center\">\n<img src=\"assets/review-analyzer-demo.webp\" width=\"900\" alt=\"Product Review Analyzer running sentiment, feature, and complaint agents in parallel in n8n\" />\n</p>\n\n<p align=\"center\"><sub><a href=\"assets/review-analyzer-demo-full.mp4\">▶️ Full-length version (review-analyzer-demo-full.mp4)</a></sub></p>\n\n---\n\n## 🎯 Design Decisions That Mattered\n\n- **Locking the classifier to one word, not a sentence** — the Manager Agent's system message explicitly forbids any output except `blog`, `social`, `email`, or `image`. That single constraint is what lets the `Normalize Route` code node route deterministically instead of fuzzy-matching prose.\n- **A default route, not a dead end** — if the Manager's output doesn't cleanly match any of the four expected words, `Normalize Route` falls back to `blog` rather than the workflow silently failing. A wrong-but-reasonable guess beats no output at all for an unattended pipeline.\n- **Independent analyses genuinely benefit from running in parallel** — sentiment, feature extraction, and complaint classification don't depend on each other's output, so there's no reason to force them into a slower sequential chain. This is the specific condition that makes Parallel the right pattern instead of Serial.\n- **All three parallel agents share the same output discipline** — exact template, `temperature 0`, one regex-parseable field per line. Consistency across independent agents is what makes the `Merge` + `Combine Into Structured Summary` step reliable instead of needing bespoke parsing logic per agent.\n- **The Sheets logging step is there but optional** — both this workflow's \"Append to Google Sheet\" node ships disabled by default. The workflow produces a complete, usable output with or without it, so persistence is an opt-in decision, not a hard dependency.\n\n---\n\n## 🎓 What This Demonstrates\n\n- **Matching the architecture to the actual shape of the problem** — recognizing \"exactly one of several outcomes\" (Router) versus \"several independent facts about the same input\" (Parallel) as genuinely different design problems, not defaulting to one pattern out of habit\n- **Constraining model output to make downstream logic simple** — a one-word classifier and a locked line-by-line template both exist so plain code (a `.find()`, a regex) can do the parsing, instead of needing another AI call just to interpret the first one\n- **Designing the unhappy path in a router** — a default fallback route means a routing failure degrades to \"probably not quite right\" instead of \"nothing happens\"\n- **Thinking about the analysis at scale, not just per-request** — the review analyzer's structured, spreadsheet-ready output is designed with \"run this on hundreds of reviews and look for patterns\" in mind, not just answering one review at a time\n\n---\n\n<div align=\"center\">\n\nI'm a **Chemical Engineer transitioning into AI Product Management**, and I build hands-on with agentic workflow tools to understand the real design tradeoffs behind multi-step AI systems.\n\n📂 More case studies and projects on my [GitHub profile](https://github.com/Rehansheikh787).\n\n</div>",
+        "degree": 2,
+        "links": [
+          "a70619b5-5f7a-48ac-baac-0218521d45ce",
+          "1c91f982-96e6-4cdb-a27f-b0550a89e8d9"
+        ]
       }
     },
     {
       "data": {
         "id": "417503b1-6194-4abb-946a-7a1206b3cff0",
-        "label": "Groq AI engine",
+        "label": "Groq AI Engine",
         "category": "Resources",
         "tags": [
           "AI",
           "Inference",
-          "LPUs",
-          "Groq"
+          "LPUs"
         ],
         "summary": "Groq is an AI inference engine that uses LPUs (Language Processing Units) to achieve extremely fast generation speeds.",
         "body": "Groq is an AI inference engine that uses LPUs (Language Processing Units) to achieve extremely fast generation speeds.",
-        "degree": 0
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "5a97cbbf-9dfb-4261-8464-b3b145afeade",
-        "label": "RAG AI framework",
+        "label": "RAG Framework",
         "category": "Resources",
         "tags": [
           "AI",
@@ -166,118 +253,176 @@ window.GRAPH_DATA = {
         ],
         "summary": "Retrieval-Augmented Generation (RAG) is an AI framework for retrieving facts from an external knowledge base to ground large language models.",
         "body": "Retrieval-Augmented Generation (RAG) is an AI framework for retrieving facts from an external knowledge base to ground large language models.",
-        "degree": 0
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "6db68aa5-2c62-458e-a1f8-3349c338b0e7",
-        "label": "PARA organization system",
+        "label": "PARA Method",
         "category": "Resources",
         "tags": [
-          "PARA",
           "organization",
-          "productivity"
+          "productivity",
+          "digital"
         ],
         "summary": "PARA stands for Projects, Areas, Resources, and Archives. It is a system for organizing digital information.",
         "body": "PARA stands for Projects, Areas, Resources, and Archives. It is a system for organizing digital information.",
-        "degree": 0
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "71b852fd-6e52-4b34-9c10-088bc968713e",
-        "label": "Chocolate cake recipe",
+        "label": "Chocolate Cake Recipe",
         "category": "Resources",
         "tags": [
           "baking",
-          "recipe",
-          "chocolate"
+          "cake",
+          "chocolate",
+          "recipe"
         ],
         "summary": "To bake a chocolate cake, you need flour, cocoa powder, sugar, baking powder, eggs, milk, and butter. Bake at 350°F (175°C) for 30 minutes.",
         "body": "To bake a chocolate cake, you need flour, cocoa powder, sugar, baking powder, eggs, milk, and butter. Bake at 350°F (175°C) for 30 minutes.",
-        "degree": 0
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "81066345-901d-4a88-b2a9-0fce83a82a41",
-        "label": "CLI test note",
+        "label": "CLI Note",
         "category": "Resources",
         "tags": [
           "CLI",
           "Test",
-          "Note",
-          "Command"
+          "Note"
         ],
         "summary": "Test note from CLI",
         "body": "Test note from CLI",
-        "degree": 0
+        "degree": 0,
+        "links": []
       }
     },
     {
       "data": {
         "id": "8f5899eb-02bd-4c2a-b33e-b3a05fe04440",
-        "label": "Lightweight text embedding model",
+        "label": "SentenceTransformers Model",
         "category": "Resources",
         "tags": [
           "SentenceTransformers",
           "all-MiniLM-L6-v2",
-          "text embedding"
+          "NLP"
         ],
         "summary": "When using SentenceTransformers, 'all-MiniLM-L6-v2' is a great lightweight model for embedding text quickly.",
         "body": "When using SentenceTransformers, 'all-MiniLM-L6-v2' is a great lightweight model for embedding text quickly.",
-        "degree": 0
+        "degree": 0,
+        "links": []
+      }
+    },
+    {
+      "data": {
+        "id": "a70619b5-5f7a-48ac-baac-0218521d45ce",
+        "label": "PM Interview Guide",
+        "category": "Resources",
+        "tags": [
+          "Product Management",
+          "Interview",
+          "Job Description"
+        ],
+        "summary": "# PDF Document: PM Prompt.pdf\n\nYou are an experienced Product Management interviewer conducting a live, spoken mock interview with me for the role des...",
+        "body": "# PDF Document: PM Prompt.pdf\n\nYou are an experienced Product Management interviewer conducting a live, spoken mock interview with me for the role described in the job description below. We are talking over voice, so behave like a real human interviewer in a real conversation. === MY RESUME === [PASTE YOUR RESUME HERE] === COMPANY / ROLE JOB DESCRIPTION === [PASTE THE JD HERE] YOUR ROLE AND BEHAVIOR: - Interview me for THIS specific role at THIS company. Tailor questions to the JD's responsibilities, required skills, seniority level, and the company's product/domain. - Use my resume to probe my actual experience: dig into specific projects, decisions, metrics, and trade-offs I mention on it. - Speak naturally and conversationally, the way a real interviewer would over a call. Keep your turns short. Ask ONE question at a time, then STOP and wait for my spoken answer. Never answer your own questions or move on before I respond. - Ask realistic follow-ups based on what I actually say (\"Why did you choose that?\", \"What was the impact?\", \"How would you handle it if X?\"). Push for specifics, metrics, and reasoning like a tough-but-fair interviewer. - Do not coach, correct, or give feedback DURING the interview. Stay in character as the interviewer until the end. INTERVIEW STRUCTURE (adapt length to the role's seniority): 1. Brief warm-up / \"tell me about yourself\" + why this role/company. 2. Behavioral & leadership questions (use the STAR-style probing; tie to JD competencies). 3. Product sense / design question (relevant to the company's product or domain). 4. Analytical / metrics / execution question (prioritization, tradeoffs, defining success metrics). 5. Strategy or estimation question if appropriate for the seniority. 6. A chance for me to ask you (the \"interviewer\") questions. PACING: - Aim for roughly [SET A NUMBER, e.g. 8–10] questions total, or run until I say \"let's wrap up.\" - If I struggle or go silent, wait, then optionally offer a small nudge — but keep it realistic. AT THE END (only when I say we're done, or after the final question): - Break character and give me structured feedback: • Overall impression and a rough hire signal (strong hire / hire / lean no / no hire) with reasoning. • Strengths, mapped to the JD. • Specific gaps or weak answers, with what a stronger answer would have included. • 3–5 concrete things to improve before the real interview. • One or two example answers rewritten well, using my real background. Start now by greeting me and asking your first question. Wait for my spoken reply before continuing.",
+        "degree": 2,
+        "links": [
+          "1c91f982-96e6-4cdb-a27f-b0550a89e8d9",
+          "395af814-f27f-4095-98a1-759de2fcda5c"
+        ]
       }
     },
     {
       "data": {
         "id": "b1b6b5df-4e32-4d45-983b-796cdfa3c7a4",
-        "label": "Python 3.12 error messages",
+        "label": "Python 3.12 Updates",
         "category": "Resources",
         "tags": [
           "Python",
-          "SyntaxErrors",
-          "Error Messages"
+          "SyntaxError",
+          "Updates"
         ],
         "summary": "Python 3.12 introduced improved error messages for SyntaxErrors.",
         "body": "Python 3.12 introduced improved error messages for SyntaxErrors.",
-        "degree": 0
+        "degree": 1,
+        "links": [
+          "d26acfb0-eeb7-47db-95f2-9e43fdcc4874"
+        ]
+      }
+    },
+    {
+      "data": {
+        "id": "d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "label": "Python Website",
+        "category": "Resources",
+        "tags": [
+          "Python",
+          "Programming",
+          "Language"
+        ],
+        "summary": "Welcome to Python.org",
+        "body": "Welcome to Python.org",
+        "degree": 4,
+        "links": [
+          "0017ee9d-fbc6-4dae-aa74-d72482743912",
+          "171db0fe-fbf3-409b-aa28-dfee7c369b2b",
+          "b1b6b5df-4e32-4d45-983b-796cdfa3c7a4"
+        ]
       }
     },
     {
       "data": {
         "id": "d396b987-6789-4a05-9f5b-b9f8f523ea72",
-        "label": "Streamlit app framework",
+        "label": "Streamlit",
         "category": "Resources",
         "tags": [
-          "Streamlit",
           "Machine Learning",
-          "Data Science"
+          "Data Science",
+          "Streamlit"
         ],
         "summary": "https://streamlit.io/ - Streamlit is an open-source app framework for Machine Learning and Data Science teams.",
         "body": "https://streamlit.io/ - Streamlit is an open-source app framework for Machine Learning and Data Science teams.",
-        "degree": 0
+        "degree": 1,
+        "links": [
+          "0380c3b5-f9d9-4ee8-a373-4c76bc961e7d"
+        ]
       }
     },
     {
       "data": {
         "id": "fe985bd6-f539-49d6-8f51-5af75c5e3b24",
-        "label": "Use hashlib.sha256",
+        "label": "Data Integrity",
         "category": "Resources",
         "tags": [
           "hashing",
           "integrity",
-          "security",
-          "sha256"
+          "security"
         ],
         "summary": "Always hash files or content using hashlib.sha256 to ensure data integrity and prevent duplicates.",
         "body": "Always hash files or content using hashlib.sha256 to ensure data integrity and prevent duplicates.",
-        "degree": 0
+        "degree": 0,
+        "links": []
       }
     }
   ],
   "edges": [
+    {
+      "data": {
+        "id": "e_0017ee9d-fbc6-4dae-aa74-d72482743912_d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "source": "0017ee9d-fbc6-4dae-aa74-d72482743912",
+        "target": "d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "weight": 0.5379
+      }
+    },
     {
       "data": {
         "id": "e_0017ee9d-fbc6-4dae-aa74-d72482743912_171db0fe-fbf3-409b-aa28-dfee7c369b2b",
@@ -285,11 +430,67 @@ window.GRAPH_DATA = {
         "target": "171db0fe-fbf3-409b-aa28-dfee7c369b2b",
         "weight": 0.5061
       }
+    },
+    {
+      "data": {
+        "id": "e_0380c3b5-f9d9-4ee8-a373-4c76bc961e7d_d396b987-6789-4a05-9f5b-b9f8f523ea72",
+        "source": "0380c3b5-f9d9-4ee8-a373-4c76bc961e7d",
+        "target": "d396b987-6789-4a05-9f5b-b9f8f523ea72",
+        "weight": 0.3914
+      }
+    },
+    {
+      "data": {
+        "id": "e_171db0fe-fbf3-409b-aa28-dfee7c369b2b_d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "source": "171db0fe-fbf3-409b-aa28-dfee7c369b2b",
+        "target": "d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "weight": 0.4318
+      }
+    },
+    {
+      "data": {
+        "id": "e_1c91f982-96e6-4cdb-a27f-b0550a89e8d9_a70619b5-5f7a-48ac-baac-0218521d45ce",
+        "source": "1c91f982-96e6-4cdb-a27f-b0550a89e8d9",
+        "target": "a70619b5-5f7a-48ac-baac-0218521d45ce",
+        "weight": 0.9979
+      }
+    },
+    {
+      "data": {
+        "id": "e_1c91f982-96e6-4cdb-a27f-b0550a89e8d9_395af814-f27f-4095-98a1-759de2fcda5c",
+        "source": "1c91f982-96e6-4cdb-a27f-b0550a89e8d9",
+        "target": "395af814-f27f-4095-98a1-759de2fcda5c",
+        "weight": 0.7241
+      }
+    },
+    {
+      "data": {
+        "id": "e_20139372-1c45-426c-8a55-01736f9baeaa_d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "source": "20139372-1c45-426c-8a55-01736f9baeaa",
+        "target": "d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "weight": 0.3825
+      }
+    },
+    {
+      "data": {
+        "id": "e_395af814-f27f-4095-98a1-759de2fcda5c_a70619b5-5f7a-48ac-baac-0218521d45ce",
+        "source": "395af814-f27f-4095-98a1-759de2fcda5c",
+        "target": "a70619b5-5f7a-48ac-baac-0218521d45ce",
+        "weight": 0.7254
+      }
+    },
+    {
+      "data": {
+        "id": "e_b1b6b5df-4e32-4d45-983b-796cdfa3c7a4_d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "source": "b1b6b5df-4e32-4d45-983b-796cdfa3c7a4",
+        "target": "d26acfb0-eeb7-47db-95f2-9e43fdcc4874",
+        "weight": 0.384
+      }
     }
   ],
   "metadata": {
-    "generated_at": "2026-07-22T09:26:03.225231+00:00",
-    "node_count": 18,
-    "edge_count": 1
+    "generated_at": "2026-08-16T11:25:13.183205+00:00",
+    "node_count": 24,
+    "edge_count": 9
   }
 };

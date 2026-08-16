@@ -18,14 +18,15 @@ from llm_client import call_groq
 
 logger = logging.getLogger(__name__)
 
-RAG_SYSTEM_PROMPT = """You are Second Brain, an AI assistant that answers questions based on the user's personal notes.
-Synthesize a concise, clear answer using ONLY the provided context notes below.
+RAG_SYSTEM_PROMPT = """You are Second Brain, an AI assistant that answers questions based on the user's personal notes and conversation history.
+Synthesize a concise, clear answer using ONLY the provided context notes and prior conversation turns below.
 Do not invent information outside the provided notes.
 If the notes do not contain enough information to answer the question, state that clearly.
+When answering follow-up questions (e.g. "tell me more about that", "explain simply", "what else?"), refer to the prior conversation history and notes.
 
 Respond ONLY in valid JSON with this exact structure:
 {
-  "answer": "your clear synthesized response based on the context notes",
+  "answer": "your clear synthesized response based on the context notes and conversation history",
   "citations": ["id_of_note1", "id_of_note2"]
 }"""
 
@@ -62,44 +63,56 @@ def retrieve_context(question: str, top_k: int = TOP_K_RETRIEVAL) -> list[dict]:
     # Compute embedding of question
     q_vec = compute_embedding(question)
     q_norm = np.linalg.norm(q_vec)
-    if q_norm == 0:
-        return []
-
+    
     vec_norms = np.linalg.norm(valid_vectors, axis=1)
     valid_mask = vec_norms > 0
 
     similarities = np.zeros(len(valid_ids))
-    similarities[valid_mask] = np.dot(valid_vectors[valid_mask], q_vec) / (vec_norms[valid_mask] * q_norm)
+    if q_norm > 0:
+        similarities[valid_mask] = np.dot(valid_vectors[valid_mask], q_vec) / (vec_norms[valid_mask] * q_norm)
 
-    # Sort indices by similarity descending
-    sorted_idx = np.argsort(similarities)[::-1]
-    top_indices = sorted_idx[:top_k]
+    import re
+    stop_words = {"what", "are", "is", "the", "a", "an", "and", "or", "in", "of", "to", "for", "with", "how", "do", "does", "can", "why", "where"}
+    q_words = set(re.findall(r"\w+", question.lower())) - stop_words
 
-    results = []
-    for idx in top_indices:
-        sim_score = float(similarities[idx])
+    all_scores = []
+    for idx in range(len(valid_ids)):
+        sim_score = max(0.0, float(similarities[idx]))
         note_id = valid_ids[idx]
         note_path = note_file_map[note_id]
         meta, body = read_frontmatter(note_path)
+        title = meta.get("title", note_path.stem)
 
-        results.append({
+        title_words = set(re.findall(r"\w+", title.lower()))
+        body_words = set(re.findall(r"\w+", body.lower()))
+
+        if q_words:
+            title_match_ratio = len(q_words & title_words) / len(q_words)
+            body_match_ratio = len(q_words & body_words) / len(q_words)
+            hybrid_score = (sim_score * 0.35) + (title_match_ratio * 0.50) + (body_match_ratio * 0.15)
+        else:
+            hybrid_score = sim_score
+
+        all_scores.append({
             "id": note_id,
-            "title": meta.get("title", note_path.stem),
+            "title": title,
             "category": meta.get("category", "Resources"),
             "tags": meta.get("tags", []),
             "content": body,
-            "similarity": round(sim_score, 4)
+            "similarity": round(float(hybrid_score), 4)
         })
 
-    return results
+    all_scores.sort(key=lambda x: x["similarity"], reverse=True)
+    return all_scores[:top_k]
 
 
-def ask(question: str, top_k: int = TOP_K_RETRIEVAL) -> dict:
+def ask(question: str, conversation_history: list[dict] = None, top_k: int = TOP_K_RETRIEVAL) -> dict:
     """
-    RAG Query Pipeline:
-    1. Retrieve top-K context notes relevant to question.
-    2. Format context and query Groq LLM.
-    3. Return synthesized response with citations and confidence score.
+    RAG Query Pipeline with Multi-Turn Conversation Memory:
+    1. Resolve query context against prior turns if question is a short follow-up.
+    2. Retrieve top-K context notes relevant to question.
+    3. Format prior conversation history and context notes for LLM.
+    4. Return synthesized response with citations and confidence score.
     """
     if not question or not question.strip():
         return {
@@ -108,7 +121,14 @@ def ask(question: str, top_k: int = TOP_K_RETRIEVAL) -> dict:
             "confidence": 0.0
         }
 
-    context_notes = retrieve_context(question, top_k=top_k)
+    # Resolve context for short follow-up questions (e.g. "tell me more", "explain that")
+    search_query = question
+    if conversation_history:
+        recent_user_turns = [m["content"] for m in conversation_history if m.get("role") == "user"]
+        if recent_user_turns and (len(question.split()) <= 5 or any(w in question.lower() for w in ["it", "that", "this", "more", "explain", "why", "how"])):
+            search_query = f"{recent_user_turns[-1]} {question}"
+
+    context_notes = retrieve_context(search_query, top_k=top_k)
 
     if not context_notes or context_notes[0]["similarity"] < 0.1:
         return {
@@ -117,7 +137,17 @@ def ask(question: str, top_k: int = TOP_K_RETRIEVAL) -> dict:
             "confidence": 0.0
         }
 
-    # Format user prompt with context notes
+    # Format conversation history string (last 4 turns)
+    history_str = ""
+    if conversation_history:
+        recent_turns = conversation_history[-4:]
+        history_parts = []
+        for turn in recent_turns:
+            role_label = "User" if turn.get("role") == "user" else "Assistant"
+            history_parts.append(f"{role_label}: {turn.get('content', '')}")
+        history_str = "Prior Conversation History:\n" + "\n".join(history_parts) + "\n\n"
+
+    # Format user prompt with context notes and history
     context_str_parts = []
     for note in context_notes:
         part = (
@@ -127,7 +157,8 @@ def ask(question: str, top_k: int = TOP_K_RETRIEVAL) -> dict:
         context_str_parts.append(part)
 
     user_prompt = (
-        f"Question: {question}\n\n"
+        f"{history_str}"
+        f"Current Question: {question}\n\n"
         f"Retrieved Context Notes:\n" + "\n".join(context_str_parts)
     )
 
@@ -140,10 +171,20 @@ def ask(question: str, top_k: int = TOP_K_RETRIEVAL) -> dict:
         )
 
         answer_text = response.get("answer", "No answer generated.")
-        cited_ids = set(response.get("citations", []))
+        raw_citations = response.get("citations", [])
 
-        # Filter sources to cited ones, or fall back to top retrieved context
-        sources = [n for n in context_notes if n["id"] in cited_ids]
+        # Match citations against note id, title, or short ID prefix
+        sources = []
+        for note in context_notes:
+            nid = note["id"]
+            title = note["title"]
+            for cit in raw_citations:
+                cit_str = str(cit).strip().lower()
+                if cit_str == nid.lower() or cit_str == nid[:8].lower() or cit_str in title.lower() or title.lower() in cit_str:
+                    if note not in sources:
+                        sources.append(note)
+                    break
+
         if not sources and context_notes:
             sources = context_notes[:2]
 

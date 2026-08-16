@@ -1,0 +1,387 @@
+/* ============================================================
+   Second Brain — Warm Editorial Paper / Monocle Press Design System
+   Aesthetic: Warm Parchment Canvas • Literary Ink Typography • Crisp Print Grid
+   Typography: Newsreader (Headings) • Plus Jakarta Sans (Body) • IBM Plex Mono (Data)
+   Zero Glassmorphism • Zero Neon Glows • Pure Intellectual Clarity
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Paper Surfaces */
+  --bg-page: #FAF8F5;
+  --bg-paper: #FFFFFF;
+  --bg-paper-subtle: #F4EFEA;
+  --bg-inset: #F0EAE1;
+  --bg-sidebar: #F5F1EB;
+
+  /* Ink & Typography */
+  --ink-primary: #1C1917;
+  --ink-secondary: #44403C;
+  --ink-muted: #78716C;
+  --ink-faint: #A8A29E;
+
+  /* Editorial Borders */
+  --border-editorial: #E7E0D6;
+  --border-strong: #D6CCC0;
+  --border-focus: #1C1917;
+
+  /* Literary Accent Inks (PARA) */
+  --para-projects: #C2410C;  /* Terracotta */
+  --para-areas: #7C3AED;     /* Deep Plum / Iris */
+  --para-resources: #1D4ED8; /* Oxford Indigo */
+  --para-archives: #4D7C0F;  /* Olive Moss */
+
+  /* Fonts */
+  --font-editorial: 'Newsreader', Georgia, serif;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+
+  /* Paper Shadows */
+  --shadow-paper-sm: 0 1px 2px rgba(44, 34, 24, 0.04);
+  --shadow-paper: 0 1px 3px rgba(44, 34, 24, 0.06), 0 6px 16px rgba(44, 34, 24, 0.03);
+  --shadow-paper-lg: 0 4px 6px -1px rgba(44, 34, 24, 0.05), 0 16px 28px -4px rgba(44, 34, 24, 0.08);
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+}
+
+/* ---------- Global Page Base ---------- */
+html, body, .stApp {
+  font-family: var(--font-body) !important;
+  color: var(--ink-primary) !important;
+  background: var(--bg-page) !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+.stApp {
+  background: var(--bg-page) !important;
+}
+
+/* Headings with Editorial Serif */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-editorial) !important;
+  color: var(--ink-primary) !important;
+  letter-spacing: -0.015em !important;
+  font-weight: 600 !important;
+}
+
+code, pre, [data-testid="stMetricValue"], .mono-font {
+  font-family: var(--font-mono) !important;
+}
+
+/* ---------- Sidebar Styling ---------- */
+section[data-testid="stSidebar"] {
+  background: var(--bg-sidebar) !important;
+  border-right: 1px solid var(--border-editorial) !important;
+  box-shadow: none !important;
+}
+
+section[data-testid="stSidebar"] hr {
+  border-color: var(--border-editorial) !important;
+  margin: 1.2rem 0 !important;
+}
+
+/* ---------- Editorial Header Box ---------- */
+.cyber-header-box {
+  background: var(--bg-paper) !important;
+  border: 1px solid var(--border-editorial) !important;
+  border-radius: var(--radius-md);
+  padding: 2rem 2.4rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-paper);
+  position: relative;
+}
+
+.cyber-header-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--para-projects), var(--para-areas), var(--para-resources));
+  border-top-left-radius: var(--radius-md);
+  border-top-right-radius: var(--radius-md);
+}
+
+.gradient-title {
+  font-family: var(--font-editorial) !important;
+  font-weight: 700 !important;
+  font-size: 2.5rem !important;
+  font-style: italic !important;
+  color: var(--ink-primary) !important;
+  -webkit-text-fill-color: var(--ink-primary) !important;
+  letter-spacing: -0.02em !important;
+  margin-bottom: 0.25rem !important;
+}
+
+.sub-banner {
+  color: var(--ink-secondary) !important;
+  font-size: 0.95rem;
+  font-weight: 400;
+  font-family: var(--font-body);
+}
+
+.sys-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--ink-secondary);
+  background: var(--bg-paper-subtle);
+  border: 1px solid var(--border-editorial);
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-top: 10px;
+}
+
+.sys-chip .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--para-archives);
+}
+
+/* ---------- Bento Paper Cards ---------- */
+.bento-card {
+  background: var(--bg-paper);
+  border: 1px solid var(--border-editorial);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  box-shadow: var(--shadow-paper-sm);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.bento-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-paper);
+  transform: translateY(-2px);
+}
+
+.bento-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+}
+
+.bento-value {
+  font-family: var(--font-mono);
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin: 6px 0 2px 0;
+  line-height: 1.1;
+  color: var(--ink-primary);
+}
+
+.bento-hint {
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  font-family: var(--font-mono);
+}
+
+/* ---------- Streamlit Native Metrics Override ---------- */
+div[data-testid="stMetric"] {
+  background: var(--bg-paper) !important;
+  border: 1px solid var(--border-editorial) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 14px 18px !important;
+  box-shadow: var(--shadow-paper-sm) !important;
+}
+
+div[data-testid="stMetricLabel"] {
+  color: var(--ink-muted) !important;
+  font-size: 0.74rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+}
+
+div[data-testid="stMetricValue"] {
+  color: var(--ink-primary) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 1.7rem !important;
+  font-weight: 700 !important;
+}
+
+/* ---------- PARA Badges (Editorial Ink) ---------- */
+.badge-projects, .badge-areas, .badge-resources, .badge-archives {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.badge-projects  { background: #FFF1EE; color: var(--para-projects);  border: 1px solid #FED7AA; }
+.badge-areas     { background: #F5F3FF; color: var(--para-areas);     border: 1px solid #DDD6FE; }
+.badge-resources { background: #EFF6FF; color: var(--para-resources); border: 1px solid #BFDBFE; }
+.badge-archives  { background: #F7FEE7; color: var(--para-archives);  border: 1px solid #D9F99D; }
+
+/* ---------- Tabs Styling (Clean Paper Segment) ---------- */
+.stTabs [data-baseweb="tab-list"] {
+  gap: 4px !important;
+  background: var(--bg-paper-subtle) !important;
+  padding: 6px !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border-editorial) !important;
+}
+
+.stTabs [data-baseweb="tab"] {
+  border-radius: 4px !important;
+  color: var(--ink-secondary) !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  padding: 8px 18px !important;
+  transition: all 0.15s ease !important;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+}
+
+.stTabs [data-baseweb="tab"]:hover {
+  color: var(--ink-primary) !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+.stTabs [aria-selected="true"] {
+  background: var(--bg-paper) !important;
+  color: var(--ink-primary) !important;
+  font-weight: 700 !important;
+  box-shadow: var(--shadow-paper-sm) !important;
+  border: 1px solid var(--border-editorial) !important;
+}
+
+/* ---------- Expanders & Note Cards ---------- */
+[data-testid="stExpander"] {
+  background: var(--bg-paper) !important;
+  border: 1px solid var(--border-editorial) !important;
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-paper-sm) !important;
+  margin-bottom: 10px !important;
+}
+
+[data-testid="stExpander"]:hover {
+  border-color: var(--border-strong) !important;
+}
+
+[data-testid="stExpander"] summary p {
+  font-size: 0.94rem !important;
+  font-weight: 600 !important;
+  color: var(--ink-primary) !important;
+  font-family: var(--font-body) !important;
+}
+
+/* ---------- Note Content Box ---------- */
+.note-preview-box {
+  background: var(--bg-page) !important;
+  border: 1px solid var(--border-editorial);
+  border-radius: 4px;
+  padding: 1.2rem 1.4rem;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--ink-primary);
+  max-height: 320px;
+  overflow-y: auto;
+  font-family: var(--font-body);
+}
+
+/* ---------- Buttons & Inputs ---------- */
+.stButton button, .stDownloadButton button {
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+  border: 1px solid var(--border-editorial) !important;
+  background: var(--bg-paper) !important;
+  color: var(--ink-primary) !important;
+  box-shadow: var(--shadow-paper-sm) !important;
+}
+
+.stButton button:hover, .stDownloadButton button:hover {
+  background: var(--bg-paper-subtle) !important;
+  border-color: var(--border-strong) !important;
+  color: var(--ink-primary) !important;
+}
+
+.stButton button[kind="primary"] {
+  background: var(--ink-primary) !important;
+  border: 1px solid var(--ink-primary) !important;
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
+  box-shadow: var(--shadow-paper) !important;
+}
+
+.stButton button[kind="primary"]:hover {
+  background: #2E2A27 !important;
+  color: #FFFFFF !important;
+}
+
+/* ---------- Form Controls ---------- */
+.stTextInput input, .stTextArea textarea, .stSelectbox [data-baseweb="select"] > div {
+  border-radius: var(--radius-sm) !important;
+  border: 1px solid var(--border-editorial) !important;
+  background: var(--bg-paper) !important;
+  color: var(--ink-primary) !important;
+  font-family: var(--font-body) !important;
+  font-size: 0.9rem !important;
+  box-shadow: var(--shadow-paper-sm) !important;
+}
+
+.stTextInput input:focus, .stTextArea textarea:focus {
+  border-color: var(--ink-primary) !important;
+  box-shadow: 0 0 0 2px rgba(28, 25, 23, 0.1) !important;
+}
+
+/* ---------- Chat Messages (Editorial Clean) ---------- */
+[data-testid="stChatMessage"] {
+  background: var(--bg-paper) !important;
+  border: 1px solid var(--border-editorial) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 1.1rem 1.3rem !important;
+  margin-bottom: 0.8rem !important;
+  box-shadow: var(--shadow-paper-sm) !important;
+  color: var(--ink-primary) !important;
+}
+
+[data-testid="stChatMessageUser"] {
+  border-left: 3px solid var(--para-resources) !important;
+  background: #F8FBFF !important;
+}
+
+[data-testid="stChatMessageAssistant"] {
+  border-left: 3px solid var(--para-projects) !important;
+  background: #FFFDFB !important;
+}
+
+/* ---------- Tag Chips ---------- */
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-secondary);
+  background: var(--bg-paper-subtle);
+  border: 1px solid var(--border-editorial);
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin-right: 4px;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-page); }
+::-webkit-scrollbar-thumb { background: #D6CCC0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #A8A29E; }

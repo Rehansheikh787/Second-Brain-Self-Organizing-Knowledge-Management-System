@@ -46,3 +46,47 @@ def test_build_graph_exports_valid_structure():
             assert (edge["source"] == "note-a" and edge["target"] == "note-b") or \
                    (edge["source"] == "note-b" and edge["target"] == "note-a")
             assert edge["weight"] == 0.85
+
+
+def test_graph_update_after_note_deletion():
+    from build_graph import build_graph, export_graph
+    from utils import write_frontmatter
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        wiki_dir = Path(tmpdir) / "wiki"
+        wiki_dir.mkdir()
+        res_dir = wiki_dir / "Resources"
+        res_dir.mkdir()
+        graph_json = Path(tmpdir) / "graph.json"
+
+        # Create note A and note B
+        note_a = res_dir / "note-a.md"
+        note_b = res_dir / "note-b.md"
+
+        write_frontmatter(note_a, {
+            "id": "note-a", "title": "Note A", "category": "Resources",
+            "links": [{"id": "note-b", "similarity": 0.8}]
+        }, "Content A")
+
+        write_frontmatter(note_b, {
+            "id": "note-b", "title": "Note B", "category": "Resources",
+            "links": [{"id": "note-a", "similarity": 0.8}]
+        }, "Content B")
+
+        with patch('build_graph.WIKI_DIR', wiki_dir), \
+             patch('utils.WIKI_DIR', wiki_dir), \
+             patch('build_graph.GRAPH_JSON', graph_json):
+
+            # Initial graph has 2 nodes, 1 edge
+            graph1 = build_graph()
+            assert len(graph1["nodes"]) == 2
+            assert len(graph1["edges"]) == 1
+
+            # Delete note B
+            note_b.unlink()
+
+            # Rebuild graph
+            graph2 = build_graph()
+            assert len(graph2["nodes"]) == 1
+            assert len(graph2["edges"]) == 0
+            assert graph2["nodes"][0]["data"]["id"] == "note-a"

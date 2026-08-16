@@ -22,11 +22,26 @@ def test_capture_note_creates_json_file():
 def test_capture_link():
     from capture import capture
     with tempfile.TemporaryDirectory() as tmpdir:
-        with patch('capture.RAW_DIR', Path(tmpdir)), patch('utils.RAW_DIR', Path(tmpdir)):
+        with patch('capture.RAW_DIR', Path(tmpdir)), \
+             patch('utils.RAW_DIR', Path(tmpdir)), \
+             patch('capture.fetch_and_clean_web_article', return_value={
+                 "title": "Example Article",
+                 "content": "# Example Article\nSource URL: https://example.com/article\n\nArticle body content here.",
+                 "url": "https://example.com/article"
+             }):
             uuid = capture("https://example.com/article", "link")
             data = json.loads((Path(tmpdir) / f"{uuid}.json").read_text())
             assert data["source_type"] == "link"
-            assert data["content"] == "https://example.com/article"
+            assert "# Example Article" in data["content"]
+            assert "Article body content here." in data["content"]
+
+def test_fetch_and_clean_web_article_fallback():
+    from capture import fetch_and_clean_web_article
+    with patch('requests.get', side_effect=Exception("Connection error")):
+        res = fetch_and_clean_web_article("https://nonexistent-site-test.org/article")
+        assert "title" in res
+        assert "content" in res
+        assert "nonexistent-site-test.org" in res["content"]
 
 def test_capture_file():
     from capture import capture
@@ -70,3 +85,9 @@ def test_capture_file_not_found_raises():
     from capture import capture
     with pytest.raises(FileNotFoundError):
         capture("/nonexistent/path/file.txt", "file")
+
+def test_clean_extracted_pdf_text():
+    from capture import clean_extracted_pdf_text
+    raw = "You \n \n are \n \n an \n \n experienced \n \n Product- \n Manager."
+    cleaned = clean_extracted_pdf_text(raw)
+    assert "You are an experienced ProductManager." in cleaned
